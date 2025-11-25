@@ -33,7 +33,7 @@
             border-bottom: 1px solid #333;
             flex-shrink: 0; 
             
-            position: sticky;
+            position: sticky; /* 헤더 고정 */
             top: 0;
             z-index: 20;
         }
@@ -41,7 +41,8 @@
             font-size: 1.4em;
             color: #ffd700;
         }
- 
+        
+        /* ⭐️ STICKY ELEMENT 1: 검색창 영역 ⭐️ */
         .explore-search-wrapper {
             padding: 10px 15px; 
             flex-shrink: 0; 
@@ -49,7 +50,7 @@
             border-bottom: 1px solid #333;
             
             position: sticky; 
-            top: 60px; 
+            top: 60px; /* 헤더 아래에 고정 */
             z-index: 10;
         }
 
@@ -122,7 +123,7 @@
         #chart-container { height: 250px; min-height: 250px; border-radius: 4px; max-height: 280px; }
         .order-area { padding: 10px 15px; } 
         
-  
+        /* ⭐️ STICKY ELEMENT 2: 주문 탭 영역 ⭐️ */
         .order-tabs { 
             display: flex; 
             border-bottom: 1px solid #444; 
@@ -131,7 +132,7 @@
             padding-top: 10px;
 
             position: sticky;
-            top: 110px;
+            top: 110px; /* 검색창 영역 아래에 고정 (약 60px + 50px) */
             z-index: 9;
             background-color: #242424; 
         }
@@ -139,7 +140,7 @@
         .order-tab { flex-grow: 1; text-align: center; padding: 10px 20px; cursor: pointer; font-weight: bold; color: #999; border: 1px solid #333; border-bottom: none; margin-right: -1px; background-color: #333; }
         .order-tab.active { color: #e0e0e0; background-color: #242424; border-top: 3px solid #007bff; border-bottom: 1px solid #242424; padding-top: 8px; }
         
-
+        /* ⭐️ STICKY ELEMENT 3: 코인 목록 헤더 ⭐️ */
         .market-header { 
             display: flex; 
             justify-content: space-between; 
@@ -150,14 +151,14 @@
             border-bottom: 1px solid #333; 
             
             position: sticky;
-            top: 155px;
+            top: 155px; /* 주문 탭 영역 아래에 고정 (약 110px + 45px) */
             z-index: 8;
             background-color: #242424; 
         }
         
         .coin-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #333; cursor: pointer; transition: background-color 0.1s; }
         
- 
+        /* coin-list-container에 배경색 적용 */
         #coin-list-container {
             background-color: #242424; 
         }
@@ -170,47 +171,24 @@
         .order-input-group label { width: 70px; font-size: 0.9em; color: #999; flex-shrink: 0; }
         .order-input-group input { flex-grow: 1; padding: 8px; border: 1px solid #444; border-radius: 4px; text-align: right; background-color: #333; color: #e0e0e0; }
 
-        .order-button { width: 100%; padding: 12px; margin-top: 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; transition: opacity 0.2s; color: white; }
-        #buy-toggle-button { background-color: #4CAF50; } 
-        #sell-toggle-button { background-color: #f0534c; } 
-
         .action-button { width: 100%; padding: 15px 0; margin-top: 10px; font-size: 1.1em; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; color: white; }
-        #keypad-buy-execute { background-color: #4CAF50; }
-        #keypad-sell-execute { background-color: #f0534c; }
+        #buy-execute-button { background-color: #4CAF50; }
+        #sell-execute-button { background-color: #f0534c; }
 
-
-        .keypad-container { 
-            margin-top: 10px; 
-            border-top: 1px solid #444; 
-            padding-top: 15px;
-            display: none;
-        }
-        .amount-display-wrapper { margin-bottom: 10px; text-align: right; border-bottom: 1px solid #444; padding-bottom: 5px; }
-        #current-amount-display, #sell-amount-display { font-size: 2.0em; font-weight: bold; color: white; display: block; }
-        #keypad-unit-display, #sell-keypad-unit-display { font-size: 0.9em; color: #999; display: block; margin-top: -5px; }
-
-        .keypad-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 5px 0;
-        }
-
-        .keypad-key {
-            background-color: #333;
+        .keypad-key { /* 퍼센트 버튼에 재사용 */
+            background-color: #444; 
             color: white;
-            padding: 15px 0;
-            font-size: 1.5em;
+            font-size: 1.0em;
             font-weight: bold;
             border-radius: 8px;
             text-align: center;
             cursor: pointer;
             transition: background-color 0.1s;
             user-select: none;
+            border: none;
         }
-        .keypad-key:active { background-color: #444; }
-        .keypad-percentage { background-color: #444; font-size: 1.0em; color: #007bff; }
-        .keypad-delete { background-color: #444; font-size: 1.5em; }
+        .keypad-key:active { background-color: #555; }
+        .keypad-percentage { color: #007bff; }
 
 
         .ranking-section { margin-top: 20px; padding: 15px; border-top: 1px solid #333; background-color: #242424; }
@@ -312,32 +290,19 @@
                                 <span style="margin-left: 5px;">KRW</span>
                             </div>
                             
-                            <div class="keypad-container" id="buy-keypad-container" data-type="buy">
-                                <div class="amount-display-wrapper">
-                                    <span id="current-amount-display">0</span>
-                                    <span id="keypad-unit-display">BTC</span>
-                                </div>
-                                <div class="keypad-grid">
-                                    <div class="keypad-key keypad-percentage" data-value="25%">25%</div>
-                                    <div class="keypad-key keypad-percentage" data-value="50%">50%</div>
-                                    <div class="keypad-key keypad-percentage" data-value="100%">100%</div>
-                                    <div class="keypad-key" data-value="1">1</div>
-                                    <div class="keypad-key" data-value="2">2</div>
-                                    <div class="keypad-key" data-value="3">3</div>
-                                    <div class="keypad-key" data-value="4">4</div>
-                                    <div class="keypad-key" data-value="5">5</div>
-                                    <div class="keypad-key" data-value="6">6</div>
-                                    <div class="keypad-key" data-value="7">7</div>
-                                    <div class="keypad-key" data-value="8">8</div>
-                                    <div class="keypad-key" data-value="9">9</div>
-                                    <div class="keypad-key" data-value=".">.</div>
-                                    <div class="keypad-key" data-value="0">0</div>
-                                    <div class="keypad-key keypad-delete" data-action="delete"><span class="material-icons">backspace</span></div>
-                                </div>
-                                <button class="action-button" id="keypad-buy-execute">Buy</button>
+                            <div class="order-input-group">
+                                <label>수량</label>
+                                <input type="number" id="buy-amount-input" value="0" min="0" step="0.00000001">
+                                <span style="margin-left: 5px;" id="buy-unit-display">BTC</span>
                             </div>
-
-                            <button class="order-button" id="buy-toggle-button">Buy (매수)</button>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <button class="keypad-key keypad-percentage" data-value="25%" data-type="buy" style="width: 24%; padding: 8px;">25%</button>
+                                <button class="keypad-key keypad-percentage" data-value="50%" data-type="buy" style="width: 24%; padding: 8px;">50%</button>
+                                <button class="keypad-key keypad-percentage" data-value="75%" data-type="buy" style="width: 24%; padding: 8px;">75%</button>
+                                <button class="keypad-key keypad-percentage" data-value="100%" data-type="buy" style="width: 24%; padding: 8px;">100%</button>
+                            </div>
+                            
+                            <button class="action-button" id="buy-execute-button" style="background-color: #4CAF50;">Buy (매수)</button>
                         </div>
                         
                         <div id="sell-content" class="order-content" style="display: none;">
@@ -351,32 +316,19 @@
                                 <span style="margin-left: 5px;">KRW</span>
                             </div>
                             
-                            <div class="keypad-container" id="sell-keypad-container" data-type="sell">
-                                <div class="amount-display-wrapper">
-                                    <span id="sell-amount-display">0</span>
-                                    <span id="sell-keypad-unit-display">BTC</span>
-                                </div>
-                                <div class="keypad-grid">
-                                    <div class="keypad-key keypad-percentage" data-value="25%">25%</div>
-                                    <div class="keypad-key keypad-percentage" data-value="50%">50%</div>
-                                    <div class="keypad-key keypad-percentage" data-value="100%">100%</div>
-                                    <div class="keypad-key" data-value="1">1</div>
-                                    <div class="keypad-key" data-value="2">2</div>
-                                    <div class="keypad-key" data-value="3">3</div>
-                                    <div class="keypad-key" data-value="4">4</div>
-                                    <div class="keypad-key" data-value="5">5</div>
-                                    <div class="keypad-key" data-value="6">6</div>
-                                    <div class="keypad-key" data-value="7">7</div>
-                                    <div class="keypad-key" data-value="8">8</div>
-                                    <div class="keypad-key" data-value="9">9</div>
-                                    <div class="keypad-key" data-value=".">.</div>
-                                    <div class="keypad-key" data-value="0">0</div>
-                                    <div class="keypad-key keypad-delete" data-action="delete"><span class="material-icons">backspace</span></div>
-                                </div>
-                                <button class="action-button" id="keypad-sell-execute">Sell</button>
+                            <div class="order-input-group">
+                                <label>수량</label>
+                                <input type="number" id="sell-amount-input" value="0" min="0" step="0.00000001">
+                                <span style="margin-left: 5px;" id="sell-unit-display">BTC</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <button class="keypad-key keypad-percentage" data-value="25%" data-type="sell" style="width: 24%; padding: 8px;">25%</button>
+                                <button class="keypad-key keypad-percentage" data-value="50%" data-type="sell" style="width: 24%; padding: 8px;">50%</button>
+                                <button class="keypad-key keypad-percentage" data-value="75%" data-type="sell" style="width: 24%; padding: 8px;">75%</button>
+                                <button class="keypad-key keypad-percentage" data-value="100%" data-type="sell" style="width: 24%; padding: 8px;">100%</button>
                             </div>
 
-                            <button class="order-button" id="sell-toggle-button">Sell (매도)</button>
+                            <button class="action-button" id="sell-execute-button" style="background-color: #f0534c;">Sell (매도)</button>
                         </div>
 
                         <div id="hold-content" class="order-content" style="display: none;">
@@ -489,7 +441,6 @@
         const ADMIN_ID = 'Admin1214';
         const ADMIN_PW = ' ';
 
-        let currentKeypadAmount = '0';
         
         const navItems = document.querySelectorAll('.nav-item');
         const screens = document.querySelectorAll('.app-screen');
@@ -519,12 +470,13 @@
         const adminAddAssetButton = document.getElementById('admin-add-asset-button');
         const coinSearchInput = document.getElementById('coin-search-input');
 
-        const buyToggleButton = document.getElementById('buy-toggle-button');
-        const sellToggleButton = document.getElementById('sell-toggle-button');
-        const buyKeypadContainer = document.getElementById('buy-keypad-container');
-        const sellKeypadContainer = document.getElementById('sell-keypad-container');
-        const keypadBuyExecute = document.getElementById('keypad-buy-execute');
-        const keypadSellExecute = document.getElementById('keypad-sell-execute');
+        // ⭐️ [수정] 키패드 관련 변수 제거 및 실행 버튼/수량 입력 필드 변수 추가
+        const buyExecuteButton = document.getElementById('buy-execute-button');
+        const sellExecuteButton = document.getElementById('sell-execute-button');
+        const buyAmountInput = document.getElementById('buy-amount-input');
+        const sellAmountInput = document.getElementById('sell-amount-input');
+        const percentageButtons = document.querySelectorAll('.keypad-percentage');
+
         
         const withdrawalButton = document.getElementById('withdrawal-button');
         const withdrawalConfirmArea = document.getElementById('withdrawal-confirm-area');
@@ -790,8 +742,9 @@
             const valuation = currentPrice * coinHolding;
             holdingValuationElement.textContent = formatKRW(valuation);
 
-            document.getElementById('keypad-unit-display').textContent = currentActiveCoin;
-            document.getElementById('sell-keypad-unit-display').textContent = currentActiveCoin;
+            // ⭐️ [추가] 수량 입력 필드의 단위 업데이트 ⭐️
+            document.getElementById('buy-unit-display').textContent = currentActiveCoin;
+            document.getElementById('sell-unit-display').textContent = currentActiveCoin;
 
             updateRanking();
         }
@@ -829,8 +782,9 @@
                     switchScreen('explore');
                 }
 
-                closeAllKeypads();
-                currentKeypadAmount = '0'; 
+                // ❌ 키패드 관련 호출 제거 
+                buyAmountInput.value = '0';
+                sellAmountInput.value = '0';
                 
                 const activeTab = document.querySelector('.order-tab.active')?.dataset.tab || 'buy';
                 switchOrderTab(activeTab); 
@@ -838,13 +792,7 @@
             }
         }
 
-        function closeAllKeypads() {
-            buyKeypadContainer.style.display = 'none';
-            buyToggleButton.textContent = 'Buy (매수)';
-            
-            sellKeypadContainer.style.display = 'none';
-            sellToggleButton.textContent = 'Sell (매도)';
-        }
+        // ❌ closeAllKeypads 함수 제거 
 
         function switchOrderTab(tabName) {
             document.querySelectorAll('.order-tab').forEach(tab => tab.classList.remove('active'));
@@ -856,9 +804,8 @@
             if (targetTab) targetTab.classList.add('active');
             if (targetContent) targetContent.style.display = 'block';
 
-            closeAllKeypads();
-            currentKeypadAmount = '0'; 
-
+            // ❌ 키패드 관련 호출 제거 
+            
             if (tabName === 'buy' || tabName === 'sell') {
                 const coinCode = currentActiveCoin;
                 
@@ -867,12 +814,6 @@
                     document.getElementById('buy-price-input').value = Math.floor(price);
                     document.getElementById('sell-price-input').value = Math.floor(price);
                 }
-                updateKeypadDisplay(tabName);
-
-                const keypadKeys = document.querySelectorAll(`#${tabName}-content .keypad-key`);
-                keypadKeys.forEach(key => {
-                    key.onclick = () => handleKeypadInput(key.dataset.value, key.dataset.action, tabName);
-                });
             }
             updateAssetDisplay();
         }
@@ -890,7 +831,6 @@
                 updateAssetDisplay();
                 if (screenName === 'explore') {
                     loadTradingViewChart(currentActiveCoin);
-                    closeAllKeypads();
                 }
             }
 
@@ -903,100 +843,17 @@
         }
 
 
-        function toggleKeypad(type) {
-            const keypadContainer = type === 'buy' ? buyKeypadContainer : sellKeypadContainer;
-            const toggleButton = type === 'buy' ? buyToggleButton : sellToggleButton;
-            const isHidden = keypadContainer.style.display === 'none' || keypadContainer.style.display === '';
-
-
-            if (type === 'buy') {
-                sellKeypadContainer.style.display = 'none';
-                sellToggleButton.textContent = 'Sell (매도)';
-            } else {
-                buyKeypadContainer.style.display = 'none';
-                buyToggleButton.textContent = 'Buy (매수)';
-            }
-
-            if (isHidden) {
-                keypadContainer.style.display = 'block';
-                toggleButton.textContent = type === 'buy' ? '키패드 닫기' : '키패드 닫기';
-                currentKeypadAmount = '0';
-                updateKeypadDisplay(type);
-            } else {
-                keypadContainer.style.display = 'none';
-                toggleButton.textContent = type === 'buy' ? 'Buy (매수)' : 'Sell (매도)';
-            }
-        }
-        
-        function updateKeypadDisplay(tabName) {
-            const displayId = tabName === 'buy' ? 'current-amount-display' : 'sell-amount-display';
-            const displayElement = document.getElementById(displayId);
-            if (displayElement) {
-                let displayValue = currentKeypadAmount;
-                if (currentKeypadAmount.includes('.')) {
-                    const parts = currentKeypadAmount.split('.');
-                    if (parts[1].length > 8) {
-                        displayValue = parts[0] + '.' + parts[1].substring(0, 8);
-                        currentKeypadAmount = displayValue;
-                    }
-                }
-
-                const parts = displayValue.split('.');
-                const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
-                displayElement.textContent = integerPart + decimalPart;
-            }
-        }
-
-        function handleKeypadInput(value, action, tabName) {
-            const keypadContainer = tabName === 'buy' ? buyKeypadContainer : sellKeypadContainer;
-            if (keypadContainer.style.display === 'none' || keypadContainer.style.display === '') return;
-
-            if (action === 'delete') {
-                if (currentKeypadAmount.length > 1) {
-                    currentKeypadAmount = currentKeypadAmount.slice(0, -1);
-                } else {
-                    currentKeypadAmount = '0';
-                }
-            } else if (value.endsWith('%')) {
-                const percentage = parseFloat(value) / 100;
-                let calculatedAmount = 0;
-                const currentPrice = parseFloat(document.getElementById(`${tabName}-price-input`).value) || 0;
-
-                if (tabName === 'buy') {
-                    const krwToUse = totalKrwAsset * percentage;
-                    if (currentPrice > 0) {
-                        calculatedAmount = krwToUse / currentPrice;
-                    }
-                } else if (tabName === 'sell') {
-                    const coinHolding = holdingCoins[currentActiveCoin] || 0;
-                    calculatedAmount = coinHolding * percentage;
-                }
-
-                currentKeypadAmount = calculatedAmount.toFixed(8).replace(/\.?0+$/, "");
-            } else {
-                if (currentKeypadAmount === '0' && value !== '.') {
-                    currentKeypadAmount = value;
-                } else if (value === '.' && currentKeypadAmount.includes('.')) {
-                    return; 
-                } else if (value !== '.' && currentKeypadAmount.includes('.')) {
-                    const decimalPart = currentKeypadAmount.split('.')[1] || '';
-                    if (decimalPart.length >= 8) return; 
-                    currentKeypadAmount += value;
-                } else {
-                    currentKeypadAmount += value;
-                }
-            }
-            updateKeypadDisplay(tabName);
-        }
+        // ❌ toggleKeypad 함수 제거
+        // ❌ updateKeypadDisplay 함수 제거
+        // ❌ handleKeypadInput 함수 제거
 
 
         function executeBuy() {
             const price = parseFloat(buyPriceInput.value.replace(/,/g, ''));
-            const amount = parseFloat(currentKeypadAmount);
+            const amount = parseFloat(buyAmountInput.value); 
             const cost = price * amount;
             
-            if (isNaN(price) || price <= 0 || isNaN(amount) || amount <= 0 || currentKeypadAmount === '0') { return alert('수량을 입력하고, 가격을 확인해주세요.'); }
+            if (isNaN(price) || price <= 0 || isNaN(amount) || amount <= 0) { return alert('매수 수량을 입력하고, 가격을 확인해주세요.'); }
             if (cost > totalKrwAsset) { return alert(`KRW 잔액이 부족합니다. (필요: ${formatKRW(cost)})`); }
 
             totalKrwAsset -= cost;
@@ -1005,18 +862,17 @@
             saveUserData(); 
             alert(`${currentActiveCoin} ${formatCoinAmount(amount)}개를 ${formatKRW(cost)}에 매수했습니다.`);
             
-            closeAllKeypads(); 
+            buyAmountInput.value = '0';
             updateAssetDisplay();
-            currentKeypadAmount = '0';
         }
 
         function executeSell() {
             const price = parseFloat(sellPriceInput.value.replace(/,/g, ''));
-            const amount = parseFloat(currentKeypadAmount);
+            const amount = parseFloat(sellAmountInput.value); 
             const revenue = price * amount;
             const coinHolding = holdingCoins[currentActiveCoin] || 0;
             
-            if (isNaN(price) || price <= 0 || isNaN(amount) || amount <= 0 || currentKeypadAmount === '0') { return alert('수량을 입력하고, 가격을 확인해주세요.'); }
+            if (isNaN(price) || price <= 0 || isNaN(amount) || amount <= 0) { return alert('매도 수량을 입력하고, 가격을 확인해주세요.'); }
             if (amount > coinHolding) { return alert(`${currentActiveCoin} 보유 수량(${formatCoinAmount(coinHolding)})이 부족합니다.`); }
 
             totalKrwAsset += revenue;
@@ -1029,9 +885,8 @@
             saveUserData(); 
             alert(`${currentActiveCoin} ${formatCoinAmount(amount)}개를 ${formatKRW(revenue)}에 매도했습니다.`);
 
-            closeAllKeypads();
+            sellAmountInput.value = '0';
             updateAssetDisplay();
-            currentKeypadAmount = '0';
         }
 
         function handleReward() {
@@ -1216,12 +1071,29 @@
             loadUserData();
             
 
-            buyToggleButton.addEventListener('click', () => toggleKeypad('buy'));
-            sellToggleButton.addEventListener('click', () => toggleKeypad('sell'));
+            // ⭐️ [수정] 실행 버튼에 직접 연결 ⭐️
+            buyExecuteButton.addEventListener('click', executeBuy); 
+            sellExecuteButton.addEventListener('click', executeSell); 
             
+            // ⭐️ [추가] 퍼센트 버튼 로직 구현 ⭐️
+            percentageButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const percentage = parseFloat(e.target.dataset.value) / 100;
+                    const type = e.target.dataset.type;
+                    const currentPrice = parseFloat(document.getElementById(`${type}-price-input`).value) || 0;
+                    let calculatedAmount = 0;
 
-            keypadBuyExecute.addEventListener('click', executeBuy);
-            keypadSellExecute.addEventListener('click', executeSell);
+                    if (type === 'buy') {
+                        const krwToUse = totalKrwAsset * percentage;
+                        if (currentPrice > 0) calculatedAmount = krwToUse / currentPrice;
+                        buyAmountInput.value = calculatedAmount.toFixed(8).replace(/\.?0+$/, "");
+                    } else if (type === 'sell') {
+                        const coinHolding = holdingCoins[currentActiveCoin] || 0;
+                        calculatedAmount = coinHolding * percentage;
+                        sellAmountInput.value = calculatedAmount.toFixed(8).replace(/\.?0+$/, "");
+                    }
+                });
+            });
             
             claimRewardButton.addEventListener('click', handleReward);
             logoutButtonSettings.addEventListener('click', handleLogout); 
