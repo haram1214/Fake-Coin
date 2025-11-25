@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Coin - 로그인</title>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #ccc;
+        }
+        .login-container {
+            background-color: #242424;
+            padding: 40px 50px;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 320px; 
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .logo-subtitle {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        .logo-icon {
+            display: inline-block;
+            font-size: 1.8em;
+            vertical-align: middle;
+            margin-right: 5px;
+            color: #ffd700;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .email-input-line {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .email-input-line input {
+            flex-grow: 1;
+            width: auto;
+            text-align: left;
+        }
+        .email-input-line select {
+            padding: 12px 5px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            min-width: 100px;
+        }
+
+        .auth-button-area {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .auth-button-area input {
+            flex-grow: 1;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            box-sizing: border-box;
+            background-color: #333; 
+            color: #fff;
+            transition: border-color 0.2s;
+        }
+        .input-group input:focus, .email-input-line select:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+        .input-label-text {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1em;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+        #send-code-button {
+            padding: 12px 15px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+            width: 100%; 
+        }
+        #send-code-button:not(:disabled) {
+            background-color: #007bff; 
+        }
+        #send-code-button:not(:disabled):hover {
+            background-color: #0056b3;
+        }
+        #send-code-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        #login-button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #00c853; 
+            transition: background-color 0.2s;
+        }
+        #login-button:hover {
+            background-color: #00a042;
+        }
+        .toggle-text {
+            margin-top: 25px;
+            font-size: 0.85em;
+            color: #999;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+        .toggle-text a {
+            color: #999;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 0 5px;
+            transition: color 0.2s;
+        }
+        .toggle-text a:hover {
+            color: #fff;
+        }
+        #message {
+            margin-top: 15px;
+            color: #ff9900;
+            font-weight: bold;
+        }
+        .separator {
+            color: #555;
+            font-size: 0.9em;
+        }
+        .auth-message {
+            margin-top: -10px;
+            margin-bottom: 10px;
+            font-size: 0.8em;
+            color: #ffd700;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        
+        <div class="logo">
+            <span class="logo-icon">📈</span> Fake Coin
+        </div>
+        <div class="logo-subtitle">
+            모의코인투자 [ Fake Coin ]
+        </div>
+
+        <h2 id="form-title" style="display: none;">로그인</h2> 
+        
+        <div class="input-group">
+            <span class="input-label-text">아이디</span>
+            <input type="text" id="user-id-input" placeholder="사용할 아이디 입력" required>
+        </div>
+
+        <div class="input-group" id="email-group">
+            <span class="input-label-text">이메일 (회원가입용)</span>
+            <div class="email-input-line">
+                <input type="text" id="email-id-input" placeholder="이메일 아이디" required>
+                <span style="color: #ccc;">@</span>
+                <select id="email-domain-select">
+                    <option value="">도메인 선택</option>
+                    <option value="gmail.com">gmail.com</option>
+                    <option value="naver.com">naver.com</option>
+                    <option value="daum.net">daum.net</option>
+                    <option value="hanmail.net">hanmail.net</option>
+                    <option value="nate.com">nate.com</option>
+                    <option value="self">직접 입력</option>
+                </select>
+                <input type="text" id="email-domain-input" placeholder="도메인 입력" style="display: none;">
+            </div>
+            
+            <div class="auth-button-area">
+                <button id="send-code-button" disabled>인증 코드 발송</button>
+            </div>
+            <div class="auth-message" id="auth-code-status"></div>
+        </div>
+
+        <div class="input-group" id="auth-code-group" style="display:none;">
+            <span class="input-label-text">인증 코드 입력</span>
+            <input type="text" id="auth-code-input" placeholder="6자리 코드" maxlength="6">
+        </div>
+        
+        <div class="input-group">
+            <span class="input-label-text">비밀번호</span>
+            <input type="password" id="password" placeholder="비밀번호" required>
+        </div>
+
+        <div class="input-group" id="confirm-password-group" style="display:none;">
+            <span class="input-label-text">비밀번호 확인</span>
+            <input type="password" id="confirm-password" placeholder="비밀번호 확인">
+        </div>
+
+        <button class="auth-button" id="login-button">로그인</button>
+        <div id="message"></div>
+
+        <div class="toggle-text">
+            <a href="#" id="forgot-password">비밀번호 찾기</a>
+            <span class="separator">|</span>
+            <a href="#" id="toggle-link">회원가입</a>
+        </div>
+    </div>
+
+    <script>
+        const MAIN_PAGE = 'index.html'; 
+        
+        const userIdInput = document.getElementById('user-id-input'); // 새로운 아이디 필드
+        const emailGroup = document.getElementById('email-group'); // 이메일 그룹
+        const emailIdInput = document.getElementById('email-id-input');
+        const emailDomainSelect = document.getElementById('email-domain-select');
+        const emailDomainInput = document.getElementById('email-domain-input');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordGroup = document.getElementById('confirm-password-group');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const loginButton = document.getElementById('login-button');
+        const toggleLink = document.getElementById('toggle-link');
+        const messageDisplay = document.getElementById('message');
+        const forgotPasswordLink = document.getElementById('forgot-password');
+        const sendCodeButton = document.getElementById('send-code-button');
+        const authCodeGroup = document.getElementById('auth-code-group');
+        const authCodeInput = document.getElementById('auth-code-input');
+        const authCodeStatus = document.getElementById('auth-code-status');
+
+        let isLoginMode = true;
+        let isCodeSent = false;
+        let isVerified = false;
+        let generatedCode = '';
+
+        function getUsers() {
+            const users = localStorage.getItem('fakeCoinUsers');
+            return users ? JSON.parse(users) : {};
+        }
+
+
+        function getFullEmail() {
+            const id = emailIdInput.value.trim();
+            let domain = emailDomainSelect.value;
+            
+            if (domain === 'self') {
+                domain = emailDomainInput.value.trim();
+            }
+            
+            if (id && domain) {
+                return `${id}@${domain}`;
+            }
+            return '';
+        }
+
+        function isValidEmail(email) {
+            return email.includes('@') && email.length > 5;
+        }
+
+        function isValidUserId(id) {
+            return id.length >= 4;
+        }
+
+        function updateSendButtonState() {
+            const fullEmail = getFullEmail();
+            sendCodeButton.disabled = !isValidEmail(fullEmail);
+            
+
+            if (!isLoginMode) {
+                sendCodeButton.style.display = 'block';
+            } else {
+                sendCodeButton.style.display = 'none';
+            }
+        }
+
+
+        emailDomainSelect.addEventListener('change', () => {
+            if (emailDomainSelect.value === 'self') {
+                emailDomainInput.style.display = 'block';
+                emailDomainInput.value = '';
+            } else {
+                emailDomainInput.style.display = 'none';
+            }
+            updateSendButtonState();
+        });
+
+        emailIdInput.addEventListener('input', updateSendButtonState);
+        emailDomainInput.addEventListener('input', updateSendButtonState);
+
+
+        sendCodeButton.addEventListener('click', () => {
+            const email = getFullEmail();
+            if (!isValidEmail(email)) {
+                authCodeStatus.textContent = '유효한 이메일 주소를 완성해주세요.';
+                authCodeStatus.style.color = '#ff9900';
+                return;
+            }
+            
+            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+            isCodeSent = true;
+            isVerified = false;
+
+            authCodeGroup.style.display = 'block';
+            sendCodeButton.textContent = '재발송';
+            authCodeStatus.textContent = `[시뮬레이션] 인증 코드: ${generatedCode} (5분 유효)`;
+            authCodeStatus.style.color = '#ffd700'; 
+            messageDisplay.textContent = '';
+            
+            setTimeout(() => {
+                if (!isVerified) {
+                    isCodeSent = false;
+                    generatedCode = '';
+                    authCodeStatus.textContent = '인증 코드가 만료되었습니다. 다시 발송해주세요.';
+                    authCodeStatus.style.color = '#ff9900';
+                    sendCodeButton.textContent = '인증 코드 발송';
+                    updateSendButtonState(); 
+                }
+            }, 300000); 
+        });
+
+
+        toggleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            
+ 
+            isCodeSent = false;
+            isVerified = false;
+            generatedCode = '';
+            messageDisplay.textContent = '';
+            authCodeStatus.textContent = '';
+            authCodeInput.value = '';
+            userIdInput.value = '';
+            emailIdInput.value = '';
+            emailDomainSelect.value = '';
+            emailDomainInput.value = '';
+            passwordInput.value = '';
+            confirmPasswordInput.value = '';
+            emailDomainInput.style.display = 'none';
+            loginButton.textContent = isLoginMode ? '로그인' : '회원가입';
+
+            if (isLoginMode) {
+
+                emailGroup.style.display = 'none';
+                confirmPasswordGroup.style.display = 'none';
+                authCodeGroup.style.display = 'none';
+                sendCodeButton.style.display = 'none';
+                toggleLink.textContent = '회원가입';
+                forgotPasswordLink.style.display = 'inline';
+            } else {
+
+                emailGroup.style.display = 'block';
+                confirmPasswordGroup.style.display = 'block';
+                sendCodeButton.style.display = 'block';
+                authCodeGroup.style.display = 'none'; 
+                toggleLink.textContent = '로그인으로 돌아가기';
+                forgotPasswordLink.style.display = 'none';
+            }
+            updateSendButtonState();
+        });
+        
+
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('이 기능은 모의 투자이므로 구현되지 않습니다.');
+        });
+
+        loginButton.addEventListener('click', () => {
+            const userId = userIdInput.value.trim();
+            const email = getFullEmail();
+            const password = passwordInput.value;
+            const users = getUsers();
+            messageDisplay.textContent = '';
+
+            if (userId === '' || password === '') {
+                messageDisplay.textContent = '아이디와 비밀번호를 입력해주세요.';
+                return;
+            }
+
+            if (isLoginMode) {
+
+                if (users[userId] && users[userId].password === password) {
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    sessionStorage.setItem('currentUser', userId); // 저장되는 ID를 userId로 변경
+                    messageDisplay.textContent = '로그인 성공! 메인 페이지로 이동합니다.';
+                    messageDisplay.style.color = '#00c853';
+
+                    setTimeout(() => {
+                        window.location.href = MAIN_PAGE;
+                    }, 1000);
+
+                } else {
+                    messageDisplay.textContent = '아이디 또는 비밀번호가 올바르지 않습니다.';
+                    messageDisplay.style.color = '#ff9900';
+                }
+            } else {
+
+                
+                if (!isValidUserId(userId)) {
+                    messageDisplay.textContent = '아이디는 4자 이상이어야 합니다.';
+                    return;
+                }
+                if (users[userId]) {
+                    messageDisplay.textContent = '이미 존재하는 아이디입니다.';
+                    return;
+                }
+                if (!isValidEmail(email)) {
+                    messageDisplay.textContent = '유효한 이메일 주소를 완성해주세요.';
+                    return;
+                }
+                
+                if (!isVerified) {
+                    if (!isCodeSent) {
+                        messageDisplay.textContent = '이메일 인증 코드를 먼저 발송해주세요.';
+                        return;
+                    }
+                    
+                    const enteredCode = authCodeInput.value.trim();
+                    if (enteredCode === generatedCode && enteredCode !== '') {
+                        isVerified = true;
+                        authCodeStatus.textContent = '✅ 이메일 인증이 완료되었습니다! (계속 진행)';
+                        authCodeStatus.style.color = '#00c853';
+                        sendCodeButton.disabled = true; 
+                        loginButton.textContent = '가입 완료';
+                        messageDisplay.textContent = '인증 완료. "가입 완료" 버튼을 다시 눌러주세요.';
+                        return;
+                    } else {
+                        messageDisplay.textContent = '인증 코드가 일치하지 않습니다.';
+                        return;
+                    }
+                }
+
+       
+                const confirmPassword = confirmPasswordInput.value;
+
+                if (password.length < 6) {
+                    messageDisplay.textContent = '비밀번호는 6자 이상이어야 합니다.';
+                    return;
+                }
+                if (password !== confirmPassword) {
+                    messageDisplay.textContent = '비밀번호와 비밀번호 확인이 일치하지 않습니다.';
+                    return;
+                }
+
+                users[userId] = { 
+                    password: password, 
+                    email: email,
+                    totalKrwAsset: 5000000, 
+                    holdingCoins: {},
+                    lastRewardTime: 0
+                };
+                localStorage.setItem('fakeCoinUsers', JSON.stringify(users));
+                
+                messageDisplay.textContent = '회원가입 완료! 이제 로그인해 주세요.';
+                messageDisplay.style.color = '#00c853';
+                
+
+                isLoginMode = true;
+                toggleLink.click();
+            }
+        });
+        
+        window.onload = () => {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = MAIN_PAGE;
+            }
+            emailGroup.style.display = 'none';
+            updateSendButtonState();
+        };
+
+    </script>
+</body>
+</html>

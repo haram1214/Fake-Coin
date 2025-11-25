@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake Coin 모의투자</title>
+    <script src="https://s3.tradingview.com/tv.js"></script> 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    
+    <style>
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 15px 15px 10px 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            flex-shrink: 0; 
+        }
+        .header-title {
+            font-size: 1.4em;
+            color: #ffd700;
+        }
+
+        .screens-wrapper {
+            flex-grow: 1;
+            overflow: hidden; 
+            position: relative;
+        }
+        .app-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; 
+            background-color: #1a1a1a;
+        }
+
+        #explore-screen .explore-content {
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column;
+            overflow: hidden; 
+        }
+        #explore-screen .left-panel {
+            width: 100%;
+            flex-shrink: 0;
+            padding-bottom: 5px;
+            border-bottom: 5px solid #1a1a1a;
+            height: 600px; 
+            overflow-y: scroll; 
+        }
+        #explore-screen .right-panel {
+            width: 100%;
+            flex-grow: 1;
+            overflow-y: scroll; 
+            background-color: #242424;
+        }
+
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 60px;
+            background-color: #242424;
+            border-top: 1px solid #333;
+            flex-shrink: 0; 
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: #888;
+            cursor: pointer;
+            padding: 5px 0;
+            transition: color 0.2s;
+            font-size: 0.7em;
+            font-weight: bold;
+        }
+        .nav-item.active {
+            color: #007bff;
+        }
+        .nav-item .material-icons {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+        
+        .chart-wrapper { padding: 5px; min-height: 250px; }
+        #chart-container { height: 250px; min-height: 250px; border-radius: 4px; max-height: 280px; }
+        .order-area { padding: 10px 15px; border-top: 5px solid #1a1a1a; }
+        .market-header { display: flex; justify-content: space-between; padding: 10px 15px; font-weight: bold; font-size: 0.9em; color: #999; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 10; background-color: #242424; }
+        .coin-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #333; cursor: pointer; transition: background-color 0.1s; }
+        .blue { color: #1e88e5; } 
+        .red { color: #f0534c; } 
+        .zero { color: #999; } 
+
+        .order-tabs { display: flex; border-bottom: 1px solid #444; margin-bottom: 15px; }
+        .order-tab { flex-grow: 1; text-align: center; padding: 10px 20px; cursor: pointer; font-weight: bold; color: #999; border: 1px solid #333; border-bottom: none; margin-right: -1px; background-color: #333; }
+        .order-tab.active { color: #e0e0e0; background-color: #242424; border-top: 3px solid #007bff; border-bottom: 1px solid #242424; padding-top: 8px; }
+        
+        .order-input-group { margin-bottom: 10px; display: flex; align-items: center; }
+        .order-input-group label { width: 70px; font-size: 0.9em; color: #999; flex-shrink: 0; }
+        .order-input-group input { flex-grow: 1; padding: 8px; border: 1px solid #444; border-radius: 4px; text-align: right; background-color: #333; color: #e0e0e0; }
+
+        .order-button { width: 100%; padding: 12px; margin-top: 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; transition: opacity 0.2s; color: white; }
+        #buy-toggle-button { background-color: #4CAF50; } 
+        #sell-toggle-button { background-color: #f0534c; } 
+
+        .action-button { width: 100%; padding: 15px 0; margin-top: 10px; font-size: 1.1em; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; color: white; }
+        #keypad-buy-execute { background-color: #4CAF50; }
+        #keypad-sell-execute { background-color: #f0534c; }
+
+        .keypad-container { 
+            margin-top: 10px; 
+            border-top: 1px solid #444; 
+            padding-top: 15px;
+            display: none;
+        }
+        .amount-display-wrapper { margin-bottom: 10px; text-align: right; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        #current-amount-display, #sell-amount-display { font-size: 2.0em; font-weight: bold; color: white; display: block; }
+        #keypad-unit-display, #sell-keypad-unit-display { font-size: 0.9em; color: #999; display: block; margin-top: -5px; }
+
+        .keypad-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 5px 0;
+        }
+
+        .keypad-key {
+            background-color: #333;
+            color: white;
+            padding: 15px 0;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.1s;
+            user-select: none;
+        }
+        .keypad-key:active { background-color: #444; }
+        .keypad-percentage { background-color: #444; font-size: 1.0em; color: #007bff; }
+        .keypad-delete { background-color: #444; font-size: 1.5em; }
+
+        .ranking-section { margin-top: 20px; padding: 15px; border-top: 1px solid #333; background-color: #242424; }
+        .ranking-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dotted #444; font-size: 0.95em; }
+        .ranking-item .rank { width: 40px; font-weight: bold; color: #ffd700; }
+        .ranking-item .asset { font-weight: bold; }
+        .my-rank { background-color: #333; padding: 10px; margin-top: 10px; border-radius: 4px; text-align: center; font-weight: bold; color: #007bff; }
+
+
+        .admin-section { padding: 15px; }
+        .admin-section input { width: 100%; padding: 10px; margin-bottom: 10px; background-color: #333; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; }
+        .admin-section button { background-color: #007bff; }
+
+   
+        #reward-screen .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%; 
+            padding: 20px;
+            text-align: center;
+        }
+        #claim-reward-button {
+            width: 80%;
+            max-width: 300px;
+            font-size: 1.1em;
+            padding: 15px;
+            margin-top: 30px;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="screens-wrapper">
+        
+        <div id="summary-screen" class="app-screen">
+            <div class="header" style="border-bottom: none;">
+                <span class="header-title" style="color: white; font-size: 1.2em;">자산</span>
+            </div>
+            <div style="padding: 15px; flex-shrink: 0;">
+                <h1 id="summary-total-asset" style="font-size: 2.5em; margin: 5px 0 0 0;">KRW 5,000,000</h1>
+                <p id="summary-change-rate" style="color: #f0534c; font-weight: bold; margin: 0 0 15px 0;">+0.00% (+0 원)</p>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: #999;">
+                    <span>투자금: <span id="summary-invested">KRW 0</span></span>
+                    <span>현금(KRW): <span id="summary-cash">KRW 5,000,000</span></span>
+                </div>
+            </div>
+            
+            <div style="flex-grow: 1; overflow-y: auto; background-color: #1a1a1a;">
+                
+                <div class="ranking-section">
+                    <h3 style="margin-top: 0; color: #ffd700;">💰 자산 랭킹 (상위 50)</h3>
+                    <div id="ranking-list">
+                        
+                    </div>
+                    <div id="my-rank-display" class="my-rank" style="display: none;">
+                        
+                    </div>
+                </div>
+
+                <h3 style="padding: 10px 15px 5px 15px; margin: 0; border-top: 1px solid #333; background-color: #1a1a1a;">보유 코인</h3>
+                <div id="summary-holdings-list">
+                    <div class="coin-item" style="border-color: #444; padding: 15px; font-size: 0.9em;">보유 코인이 없습니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="explore-screen" class="app-screen" style="display: none;">
+            <div class="header">
+                <span class="header-title" style="color: white; font-size: 1.2em;">탐색</span>
+            </div>
+            <div style="padding: 10px 15px; flex-shrink: 0; background-color: #1a1a1a; border-bottom: 1px solid #333;">
+                <input type="text" id="coin-search-input" placeholder="종목 또는 코인을 검색하세요..." style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 8px; background-color: #333; color: #e0e0e0; box-sizing: border-box;">
+            </div>
+            
+            <div class="explore-content">
+                <div class="left-panel">
+                    
+                    <div class="chart-wrapper">
+                        <h2 id="main-title" style="margin-top: 0; font-size: 1.1em; padding: 0 5px;">📈 [Fake Coin] 비트코인/KRW</h2>
+                        <div id="chart-container"></div>
+                    </div>
+
+                    <div class="order-area">
+                        <div class="order-tabs">
+                            <div class="order-tab active" data-tab="buy">매수</div>
+                            <div class="order-tab" data-tab="sell">매도</div>
+                            <div class="order-tab" data-tab="hold">보유 코인</div>
+                        </div>
+
+                        <div id="buy-content" class="order-content">
+                            <div class="order-input-group">
+                                <label>주문가능</label>
+                                <input type="text" id="buy-available-asset" value="0 KRW" readonly>
+                            </div>
+                            <div class="order-input-group">
+                                <label>매수가격</label>
+                                <input type="number" id="buy-price-input" value="0" min="1">
+                                <span style="margin-left: 5px;">KRW</span>
+                            </div>
+                            
+                            <div class="keypad-container" id="buy-keypad-container" data-type="buy">
+                                <div class="amount-display-wrapper">
+                                    <span id="current-amount-display">0</span>
+                                    <span id="keypad-unit-display">BTC</span>
+                                </div>
+                                <div class="keypad-grid">
+                                    <div class="keypad-key keypad-percentage" data-value="25%">25%</div>
+                                    <div class="keypad-key keypad-percentage" data-value="50%">50%</div>
+                                    <div class="keypad-key keypad-percentage" data-value="100%">100%</div>
+                                    <div class="keypad-key" data-value="1">1</div>
+                                    <div class="keypad-key" data-value="2">2</div>
+                                    <div class="keypad-key" data-value="3">3</div>
+                                    <div class="keypad-key" data-value="4">4</div>
+                                    <div class="keypad-key" data-value="5">5</div>
+                                    <div class="keypad-key" data-value="6">6</div>
+                                    <div class="keypad-key" data-value="7">7</div>
+                                    <div class="keypad-key" data-value="8">8</div>
+                                    <div class="keypad-key" data-value="9">9</div>
+                                    <div class="keypad-key" data-value=".">.</div>
+                                    <div class="keypad-key" data-value="0">0</div>
+                                    <div class="keypad-key keypad-delete" data-action="delete"><span class="material-icons">backspace</span></div>
+                                </div>
+                                <button class="action-button" id="keypad-buy-execute">매수 주문 실행</button>
+                            </div>
+
+                            <button class="order-button" id="buy-toggle-button">Buy (매수)</button>
+                        </div>
+                        
+                        <div id="sell-content" class="order-content" style="display: none;">
+                            <div class="order-input-group">
+                                <label>보유수량</label>
+                                <input type="text" id="sell-holding-amount" value="0 BTC" readonly>
+                            </div>
+                            <div class="order-input-group">
+                                <label>매도가격</label>
+                                <input type="number" id="sell-price-input" value="0" min="1">
+                                <span style="margin-left: 5px;">KRW</span>
+                            </div>
+                            
+                            <div class="keypad-container" id="sell-keypad-container" data-type="sell">
+                                <div class="amount-display-wrapper">
+                                    <span id="sell-amount-display">0</span>
+                                    <span id="sell-keypad-unit-display">BTC</span>
+                                </div>
+                                <div class="keypad-grid">
+                                    <div class="keypad-key keypad-percentage" data-value="25%">25%</div>
+                                    <div class="keypad-key keypad-percentage" data-value="50%">50%</div>
+                                    <div class="keypad-key keypad-percentage" data-value="100%">100%</div>
+                                    <div class="keypad-key" data-value="1">1</div>
+                                    <div class="keypad-key" data-value="2">2</div>
+                                    <div class="keypad-key" data-value="3">3</div>
+                                    <div class="keypad-key" data-value="4">4</div>
+                                    <div class="keypad-key" data-value="5">5</div>
+                                    <div class="keypad-key" data-value="6">6</div>
+                                    <div class="keypad-key" data-value="7">7</div>
+                                    <div class="keypad-key" data-value="8">8</div>
+                                    <div class="keypad-key" data-value="9">9</div>
+                                    <div class="keypad-key" data-value=".">.</div>
+                                    <div class="keypad-key" data-value="0">0</div>
+                                    <div class="keypad-key keypad-delete" data-action="delete"><span class="material-icons">backspace</span></div>
+                                </div>
+                                <button class="action-button" id="keypad-sell-execute">매도 주문 실행</button>
+                            </div>
+
+                            <button class="order-button" id="sell-toggle-button">Sell (매도)</button>
+                        </div>
+
+                        <div id="hold-content" class="order-content" style="display: none;">
+                            <p>현재 보유 코인: <span id="holding-coin-name">BTC</span></p>
+                            <p>수량: <span id="holding-amount">0.00000000</span> <span id="holding-code">BTC</span></p>
+                            <p>평가 금액: <span id="holding-valuation">0 원</span></p>
+                        </div>
+
+                        <p style="font-size: 0.8em; margin-top: 20px; color: #999;">
+                            데이터 출처: Bithumb API | 최종 업데이트: <span id="last-updated-time"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="right-panel">
+                    <div class="market-header">
+                        <div>한글명/코드</div>
+                        <div>현재가</div>
+                        <div>전일대비</div>
+                    </div>
+                    <div id="coin-list-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="reward-screen" class="app-screen" style="display: none;">
+            <div class="header" style="border-bottom: none;">
+                <span class="header-title" style="color: white; font-size: 1.2em;">접속보상</span>
+            </div>
+            
+            <div class="content-wrapper">
+                <h3 style="margin-top: 0; color: #ffd700; font-size: 1.5em;">🎉 일일 접속 보상 🎉</h3>
+                <p style="font-size: 1.1em; color: #e0e0e0; margin-bottom: 50px;">
+                    하루 한 번 **1천 5백만 KRW**를 받으세요!
+                </p>
+
+                <button id="claim-reward-button" class="order-button" style="background-color: #007bff;">보상 수령</button>
+                
+                <p style="text-align: center; color: #999; margin-top: 20px;">
+                    다음 보상 수령 가능까지:<br>
+                    <span id="reward-timer-display" style="font-weight: bold; color: #00ff00; font-size: 1.2em;">24시간 00분 00초</span>
+                </p>
+            </div>
+        </div>
+
+        <div id="settings-screen" class="app-screen" style="display: none;">
+            <div class="header" style="border-bottom: none;">
+                <span class="header-title" style="color: white; font-size: 1.2em;">설정</span>
+            </div>
+            <div style="padding: 15px;">
+                <h3 style="margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #333;">계정 정보</h3>
+                <p id="user-info">로그인 정보 없음</p>
+                <button id="logout-button-settings" class="order-button" style="background-color: #f0534c; margin-top: 20px;">로그아웃</button>
+                
+                <div id="admin-menu-section" style="display: none;">
+                    <h3 style="padding-top: 20px; padding-bottom: 10px; border-bottom: 1px solid #333; color: #ffd700;">⭐️ 어드민 관리 ⭐️</h3>
+                    <div class="admin-section">
+                        <h4>유저 자산 강제 추가</h4>
+                        <input type="text" id="admin-target-user" placeholder="유저 ID (예: testuser)">
+                        <input type="number" id="admin-asset-amount" placeholder="추가할 금액 (KRW)">
+                        <button class="order-button" id="admin-add-asset-button" style="background-color: #4CAF50;">자산 추가 적용</button>
+                    </div>
+                </div>
+                
+                <h3 style="padding-top: 20px; padding-bottom: 10px; border-bottom: 1px solid #333;">기타</h3>
+                <p>앱 버전: 1.0.4 (웹 앱)</p>
+            </div>
+        </div>
+
+    </div>
+    
+    <div class="bottom-nav">
+        <div class="nav-item active" data-nav="summary">
+            <i class="material-icons">account_balance_wallet</i>
+            <span>자산</span>
+        </div>
+        <div class="nav-item" data-nav="explore">
+            <i class="material-icons">search</i>
+            <span>탐색</span>
+        </div>
+        <div class="nav-item" data-nav="reward">
+            <i class="material-icons">card_giftcard</i>
+            <span>접속보상</span>
+        </div>
+        <div class="nav-item" data-nav="settings">
+            <i class="material-icons">settings</i>
+            <span>설정</span>
+        </div>
+    </div>
+
+    <script>
+        const LOGIN_PAGE = 'login.html';
+        
+        let currentActiveCoin = 'BTC'; 
+        let currentCoinsData = {}; 
+        let totalKrwAsset = 0; 
+        let holdingCoins = {}; 
+        let lastRewardTime = 0; 
+        let currentUsername = sessionStorage.getItem('currentUser');
+        let currentAdminState = false; 
+        const ALL_COINS_API_URL = 'https://api.bithumb.com/public/ticker/ALL_KRW';
+        const refreshInterval = 5000; 
+        const REWARD_AMOUNT = 15000000; 
+        const REWARD_COOLDOWN = 86400; 
+        const ADMIN_ID = 'Admin1214';
+        const ADMIN_PW = 'haram101214';
+
+        let currentKeypadAmount = '0';
+        
+        const navItems = document.querySelectorAll('.nav-item');
+        const screens = document.querySelectorAll('.app-screen');
+        const mainTitleElement = document.getElementById('main-title');
+        const coinListContainer = document.getElementById('coin-list-container');
+        const lastUpdatedTimeElement = document.getElementById('last-updated-time');
+        const orderTabs = document.querySelectorAll('.order-tab');
+        const logoutButtonSettings = document.getElementById('logout-button-settings'); 
+        const buyAvailableAssetElement = document.getElementById('buy-available-asset');
+        const buyPriceInput = document.getElementById('buy-price-input');
+        const sellPriceInput = document.getElementById('sell-price-input');
+        const sellHoldingAmountElement = document.getElementById('sell-holding-amount');
+        const holdingAmountElement = document.getElementById('holding-amount');
+        const holdingValuationElement = document.getElementById('holding-valuation');
+        const userInfoElement = document.getElementById('user-info');
+        const summaryTotalAsset = document.getElementById('summary-total-asset');
+        const summaryInvested = document.getElementById('summary-invested');
+        const summaryCash = document.getElementById('summary-cash');
+        const summaryHoldingsList = document.getElementById('summary-holdings-list');
+        const rankingListElement = document.getElementById('ranking-list');
+        const myRankDisplayElement = document.getElementById('my-rank-display');
+        const claimRewardButton = document.getElementById('claim-reward-button');
+        const rewardTimerDisplay = document.getElementById('reward-timer-display');
+        const adminMenuSection = document.getElementById('admin-menu-section');
+        const adminTargetUser = document.getElementById('admin-target-user');
+        const adminAssetAmount = document.getElementById('admin-asset-amount');
+        const adminAddAssetButton = document.getElementById('admin-add-asset-button');
+        const coinSearchInput = document.getElementById('coin-search-input');
+        
+      
+        const buyToggleButton = document.getElementById('buy-toggle-button');
+        const sellToggleButton = document.getElementById('sell-toggle-button');
+        const buyKeypadContainer = document.getElementById('buy-keypad-container');
+        const sellKeypadContainer = document.getElementById('sell-keypad-container');
+        const keypadBuyExecute = document.getElementById('keypad-buy-execute');
+        const keypadSellExecute = document.getElementById('keypad-sell-execute');
+
+
+        function getUsers() {
+            const users = localStorage.getItem('fakeCoinUsers');
+            return users ? JSON.parse(users) : {};
+        }
+
+        function saveUserData(username = currentUsername) {
+            if (!username) return;
+            const users = getUsers();
+            
+            if (users[username]) {
+                if (username === currentUsername) {
+                    users[username].totalKrwAsset = totalKrwAsset;
+                    users[username].holdingCoins = holdingCoins;
+                    users[username].lastRewardTime = lastRewardTime;
+                    users[username].isAdmin = currentAdminState;
+                }
+            }
+            localStorage.setItem('fakeCoinUsers', JSON.stringify(users));
+        }
+
+        function loadUserData() {
+            if (!currentUsername) return;
+            const users = getUsers();
+            const userData = users[currentUsername];
+
+            if (userData) {
+                totalKrwAsset = userData.totalKrwAsset !== undefined ? Number(userData.totalKrwAsset) : 5000000;
+                holdingCoins = userData.holdingCoins ? Object.fromEntries(
+                    Object.entries(userData.holdingCoins).map(([key, value]) => [key, Number(value)])
+                ) : {};
+                lastRewardTime = Number(userData.lastRewardTime) || 0;
+                currentAdminState = userData.isAdmin || (currentUsername === ADMIN_ID);
+            } else {
+                totalKrwAsset = 5000000;
+                holdingCoins = {};
+                lastRewardTime = 0;
+                currentAdminState = (currentUsername === ADMIN_ID);
+            }
+            
+            userInfoElement.textContent = `현재 사용자: ${currentUsername}님`;
+            if (currentAdminState) {
+                adminMenuSection.style.display = 'block';
+                userInfoElement.textContent += ' (관리자)';
+            } else {
+                adminMenuSection.style.display = 'none';
+            }
+            
+            updateAssetDisplay();
+            updateRewardTimer();
+        }
+        
+        function handleLogout() {
+            saveUserData(); 
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('currentUser');
+            window.location.href = LOGIN_PAGE;
+        }
+
+        function formatKRW(price) { return Math.floor(parseFloat(price)).toLocaleString('ko-KR') + ' 원'; }
+        
+        function formatTimeRemaining(seconds) {
+            const days = Math.floor(seconds / 86400);
+            seconds %= 86400;
+            const hours = Math.floor(seconds / 3600);
+            seconds %= 3600;
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+
+            if (days > 0) return `${days}일 ${hours}시간 ${minutes}분`;
+            if (hours > 0) return `${hours}시간 ${minutes}분 ${secs}초`;
+            return `${minutes.toString().padStart(2, '0')}분 ${secs.toString().padStart(2, '0')}초`;
+        }
+        
+        function formatCoinAmount(amount) { 
+            const fixedAmount = parseFloat(amount).toFixed(8);
+            return parseFloat(fixedAmount).toString(); 
+        }
+
+        function maskUsername(username) {
+            if (username.length <= 4) return username;
+            return username.substring(0, 2) + '**' + username.substring(username.length - 4);
+        }
+
+        function calculateTotalAsset(userData) {
+            let total = userData.totalKrwAsset || 0;
+            let invested = 0;
+            
+            Object.keys(userData.holdingCoins || {}).forEach(coinId => {
+                const amount = userData.holdingCoins[coinId];
+                if (amount > 0 && currentCoinsData[coinId]) {
+                    const price = currentCoinsData[coinId].closing_price || 0;
+                    invested += amount * price;
+                }
+            });
+            
+            return total + invested;
+        }
+        
+        function updateRanking() {
+            const allUsers = getUsers();
+            const userAssets = [];
+            
+            Object.keys(allUsers).forEach(username => {
+                if (username === ADMIN_ID) return; 
+
+                const totalAsset = calculateTotalAsset(allUsers[username]);
+                userAssets.push({ username, totalAsset });
+            });
+
+            userAssets.sort((a, b) => b.totalAsset - a.totalAsset);
+
+            let rankingHtml = '';
+            let myRank = -1;
+            
+            userAssets.forEach((item, index) => {
+                const rank = index + 1;
+                const isCurrentUser = item.username === currentUsername;
+                
+                if (isCurrentUser) myRank = rank;
+
+                if (rank <= 50) {
+                    const displayUsername = isCurrentUser ? item.username : maskUsername(item.username);
+                    const backgroundColor = isCurrentUser ? 'style="background-color: #383838; border-radius: 4px;"' : '';
+
+                    rankingHtml += `
+                        <div class="ranking-item" ${backgroundColor}>
+                            <div class="rank">${rank}</div>
+                            <div class="id">${displayUsername}</div>
+                            <div class="asset">${formatKRW(item.totalAsset)}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            rankingListElement.innerHTML = rankingHtml || '<p style="text-align: center; color: #999;">랭킹을 매길 유저 데이터가 부족합니다.</p>';
+
+            if (myRank > 50) {
+                myRankDisplayElement.style.display = 'block';
+                myRankDisplayElement.innerHTML = `**${currentUsername}**님의 현재 등수: **${myRank}**등 (${formatKRW(calculateTotalAsset(allUsers[currentUsername]))})`;
+            } else {
+                myRankDisplayElement.style.display = 'none';
+            }
+        }
+
+
+        function loadTradingViewChart(coinCode) {
+            document.getElementById('chart-container').innerHTML = ''; 
+            const tradingviewSymbol = `BITHUMB:${coinCode}KRW`;
+
+            new TradingView.widget({
+                "container_id": "chart-container",
+                "symbol": tradingviewSymbol,
+                "interval": "60",
+                "timezone": "Asia/Seoul",
+                "theme": "dark", 
+                "style": "1", 
+                "locale": "kr",
+                "toolbar_bg": "#1a1a1a",
+                "enable_publishing": false,
+                "withdateranges": true,
+                "allow_symbol_change": false,
+                "hide_side_toolbar": true, 
+                "details": false, 
+                "studies": [ "MASimple@tv-basicstudies", "Volume@tv-basicstudies" ],
+                "width": "100%", 
+                "height": "100%", 
+                "overrides": {
+                    "paneProperties.background": "#242424",
+                    "paneProperties.vertGridProperties.color": "#333333",
+                    "paneProperties.horzGridProperties.color": "#333333",
+                    "mainSeriesProperties.candleStyle.upColor": "#f0534c", 
+                    "mainSeriesProperties.candleStyle.downColor": "#1e88e5", 
+                    "mainSeriesProperties.candleStyle.borderUpColor": "#f0534c",
+                    "mainSeriesProperties.candleStyle.borderDownColor": "#1e88e5",
+                    "mainSeriesProperties.candleStyle.wickUpColor": "#f0534c",
+                    "mainSeriesProperties.candleStyle.wickDownColor": "#1e88e5"
+                }
+            });
+        }
+        
+        function updateAssetDisplay() {
+            let totalInvestedValue = 0;
+            let holdingHtml = '';
+
+            Object.keys(holdingCoins).forEach(coinId => {
+                const amount = holdingCoins[coinId];
+                if (amount > 0 && currentCoinsData[coinId]) {
+                    const price = currentCoinsData[coinId].closing_price || 0;
+                    const value = amount * price;
+                    totalInvestedValue += value;
+                    
+                    holdingHtml += `
+                        <div class="coin-item" data-id="${coinId}" style="border-color: #444; padding: 15px;">
+                            <div>
+                                ${currentCoinsData[coinId].name} (${coinId})
+                                <div style="font-size: 0.8em; color: #999;">${formatCoinAmount(amount)} ${coinId}</div>
+                            </div>
+                            <div style="font-weight: bold;">${formatKRW(value)}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            const totalAsset = totalKrwAsset + totalInvestedValue;
+            summaryTotalAsset.textContent = formatKRW(totalAsset);
+            summaryInvested.textContent = formatKRW(totalInvestedValue);
+            summaryCash.textContent = formatKRW(totalKrwAsset);
+            summaryHoldingsList.innerHTML = holdingHtml || '<div class="coin-item" style="border-color: #444; padding: 15px; font-size: 0.9em;">보유 코인이 없습니다.</div>';
+            
+            buyAvailableAssetElement.value = formatKRW(totalKrwAsset); 
+            const coinHolding = holdingCoins[currentActiveCoin] || 0;
+            const holdingDisplay = formatCoinAmount(coinHolding);
+            sellHoldingAmountElement.value = holdingDisplay + ' ' + currentActiveCoin;
+            holdingAmountElement.textContent = holdingDisplay;
+            document.getElementById('holding-code').textContent = currentActiveCoin;
+            document.getElementById('holding-coin-name').textContent = currentCoinsData[currentActiveCoin]?.name || currentActiveCoin;
+            const currentPrice = currentCoinsData[currentActiveCoin]?.closing_price || 0;
+            const valuation = currentPrice * coinHolding;
+            holdingValuationElement.textContent = formatKRW(valuation);
+
+            document.getElementById('keypad-unit-display').textContent = currentActiveCoin;
+            document.getElementById('sell-keypad-unit-display').textContent = currentActiveCoin;
+
+            updateRanking();
+        }
+
+        function updateRewardTimer() {
+            const now = Math.floor(Date.now() / 1000);
+            const timeElapsed = now - lastRewardTime;
+            const timeLeft = REWARD_COOLDOWN - timeElapsed;
+
+            if (timeLeft <= 0) {
+                claimRewardButton.disabled = false;
+                claimRewardButton.textContent = `보상 수령 (${formatKRW(REWARD_AMOUNT)})`;
+                rewardTimerDisplay.textContent = '수령 가능';
+                rewardTimerDisplay.style.color = '#00ff00';
+            } else {
+                claimRewardButton.disabled = true;
+                claimRewardButton.textContent = `다음 보상까지`;
+                rewardTimerDisplay.textContent = formatTimeRemaining(timeLeft);
+                rewardTimerDisplay.style.color = '#ffff00';
+            }
+        }
+
+        function handleCoinClick(event) {
+            const item = event.currentTarget;
+            const coinId = item.dataset.id;
+            
+            if (coinId && currentCoinsData[coinId] && coinId !== currentActiveCoin) {
+                currentActiveCoin = coinId;
+                
+                loadTradingViewChart(coinId);
+                
+                mainTitleElement.textContent = `📈 [Fake Coin] ${currentCoinsData[coinId].name} (${coinId}/KRW)`;
+                
+                if (document.querySelector('.nav-item.active').dataset.nav !== 'explore') {
+                    switchScreen('explore');
+                }
+     
+                closeAllKeypads();
+                currentKeypadAmount = '0'; 
+                
+                const activeTab = document.querySelector('.order-tab.active')?.dataset.tab || 'buy';
+                switchOrderTab(activeTab); 
+                updateAssetDisplay(); 
+            }
+        }
+
+        function closeAllKeypads() {
+            buyKeypadContainer.style.display = 'none';
+            buyToggleButton.textContent = 'Buy (매수)';
+            
+            sellKeypadContainer.style.display = 'none';
+            sellToggleButton.textContent = 'Sell (매도)';
+        }
+
+        function switchOrderTab(tabName) {
+            document.querySelectorAll('.order-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.order-content').forEach(content => content.style.display = 'none');
+            
+            const targetTab = document.querySelector(`.order-tab[data-tab="${tabName}"]`);
+            const targetContent = document.getElementById(`${tabName}-content`);
+            
+            if (targetTab) targetTab.classList.add('active');
+            if (targetContent) targetContent.style.display = 'block';
+
+            closeAllKeypads();
+            currentKeypadAmount = '0'; 
+
+            if (tabName === 'buy' || tabName === 'sell') {
+                const coinCode = currentActiveCoin;
+                
+                if (currentCoinsData[coinCode]) {
+                    const price = currentCoinsData[coinCode].closing_price || 0;
+                    document.getElementById('buy-price-input').value = Math.floor(price);
+                    document.getElementById('sell-price-input').value = Math.floor(price);
+                }
+                updateKeypadDisplay(tabName);
+                
+                
+                const keypadKeys = document.querySelectorAll(`#${tabName}-content .keypad-key`);
+                keypadKeys.forEach(key => {
+                    key.onclick = () => handleKeypadInput(key.dataset.value, key.dataset.action, tabName);
+                });
+            }
+            updateAssetDisplay();
+        }
+
+        function switchScreen(screenName) {
+            screens.forEach(screen => {
+                screen.style.display = 'none';
+            });
+            document.getElementById(`${screenName}-screen`).style.display = 'flex'; 
+
+            navItems.forEach(item => item.classList.remove('active'));
+            document.querySelector(`.nav-item[data-nav="${screenName}"]`).classList.add('active');
+            
+            if (screenName === 'summary' || screenName === 'explore') {
+                updateAssetDisplay();
+                if (screenName === 'explore') {
+                    loadTradingViewChart(currentActiveCoin);
+                    // 탐색 화면 이동 시 키패드 닫기
+                    closeAllKeypads();
+                }
+            }
+        }
+        
+
+        function toggleKeypad(type) {
+            const keypadContainer = type === 'buy' ? buyKeypadContainer : sellKeypadContainer;
+            const toggleButton = type === 'buy' ? buyToggleButton : sellToggleButton;
+            const isHidden = keypadContainer.style.display === 'none' || keypadContainer.style.display === '';
+
+            // 다른 키패드 닫기
+            if (type === 'buy') {
+                sellKeypadContainer.style.display = 'none';
+                sellToggleButton.textContent = 'Sell (매도)';
+            } else {
+                buyKeypadContainer.style.display = 'none';
+                buyToggleButton.textContent = 'Buy (매수)';
+            }
+
+            if (isHidden) {
+                keypadContainer.style.display = 'block';
+                toggleButton.textContent = type === 'buy' ? '키패드 닫기' : '키패드 닫기';
+                currentKeypadAmount = '0';
+                updateKeypadDisplay(type);
+            } else {
+                keypadContainer.style.display = 'none';
+                toggleButton.textContent = type === 'buy' ? 'Buy (매수)' : 'Sell (매도)';
+            }
+        }
+        
+        function updateKeypadDisplay(tabName) {
+            const displayId = tabName === 'buy' ? 'current-amount-display' : 'sell-amount-display';
+            const displayElement = document.getElementById(displayId);
+            if (displayElement) {
+                let displayValue = currentKeypadAmount;
+                if (currentKeypadAmount.includes('.')) {
+                    const parts = currentKeypadAmount.split('.');
+                    if (parts[1].length > 8) {
+                        displayValue = parts[0] + '.' + parts[1].substring(0, 8);
+                        currentKeypadAmount = displayValue;
+                    }
+                }
+
+                const parts = displayValue.split('.');
+                const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+                displayElement.textContent = integerPart + decimalPart;
+            }
+        }
+
+        function handleKeypadInput(value, action, tabName) {
+            const keypadContainer = tabName === 'buy' ? buyKeypadContainer : sellKeypadContainer;
+            if (keypadContainer.style.display === 'none' || keypadContainer.style.display === '') return;
+
+            if (action === 'delete') {
+                if (currentKeypadAmount.length > 1) {
+                    currentKeypadAmount = currentKeypadAmount.slice(0, -1);
+                } else {
+                    currentKeypadAmount = '0';
+                }
+            } else if (value.endsWith('%')) {
+                const percentage = parseFloat(value) / 100;
+                let calculatedAmount = 0;
+                const currentPrice = parseFloat(document.getElementById(`${tabName}-price-input`).value) || 0;
+
+                if (tabName === 'buy') {
+                    const krwToUse = totalKrwAsset * percentage;
+                    if (currentPrice > 0) {
+                        calculatedAmount = krwToUse / currentPrice;
+                    }
+                } else if (tabName === 'sell') {
+                    const coinHolding = holdingCoins[currentActiveCoin] || 0;
+                    calculatedAmount = coinHolding * percentage;
+                }
+
+                currentKeypadAmount = calculatedAmount.toFixed(8).replace(/\.?0+$/, "");
+            } else {
+                if (currentKeypadAmount === '0' && value !== '.') {
+                    currentKeypadAmount = value;
+                } else if (value === '.' && currentKeypadAmount.includes('.')) {
+                    return; 
+                } else if (value !== '.' && currentKeypadAmount.includes('.')) {
+                    const decimalPart = currentKeypadAmount.split('.')[1] || '';
+                    if (decimalPart.length >= 8) return; 
+                    currentKeypadAmount += value;
+                } else {
+                    currentKeypadAmount += value;
+                }
+            }
+            updateKeypadDisplay(tabName);
+        }
+
+
+
+        function executeBuy() {
+            const price = parseFloat(buyPriceInput.value.replace(/,/g, ''));
+            const amount = parseFloat(currentKeypadAmount);
+            const cost = price * amount;
+            
+            if (isNaN(price) || price <= 0 || isNaN(amount) || amount <= 0 || currentKeypadAmount === '0') { return alert('수량을 입력하고, 가격을 확인해주세요.'); }
+            if (cost > totalKrwAsset) { return alert(`KRW 잔액이 부족합니다. (필요: ${formatKRW(cost)})`); }
+
+            totalKrwAsset -= cost;
+            holdingCoins[currentActiveCoin] = (holdingCoins[currentActiveCoin] || 0) + amount;
+            
+            saveUserData(); 
+            alert(`${currentActiveCoin} ${formatCoinAmount(amount)}개를 ${formatKRW(cost)}에 매수했습니다.`);
+            
+            closeAllKeypads(); 
+            updateAssetDisplay();
+            currentKeypadAmount = '0';
+        }
+
+        function executeSell() {
+            const price = parseFloat(sellPriceInput.value.replace(/,/g, ''));
+            const amount = parseFloat(currentKeypadAmount);
+            const revenue = price * amount;
+            const coinHolding = holdingCoins[currentActiveCoin] || 0;
+            
+            if (isNaN(price) || price <= 0 || isNaN(amount) || amount <= 0 || currentKeypadAmount === '0') { return alert('수량을 입력하고, 가격을 확인해주세요.'); }
+            if (amount > coinHolding) { return alert(`${currentActiveCoin} 보유 수량(${formatCoinAmount(coinHolding)})이 부족합니다.`); }
+
+            totalKrwAsset += revenue;
+            holdingCoins[currentActiveCoin] = coinHolding - amount;
+            
+            if (Math.abs(holdingCoins[currentActiveCoin]) < 1e-8) {
+                holdingCoins[currentActiveCoin] = 0;
+            }
+
+            saveUserData(); 
+            alert(`${currentActiveCoin} ${formatCoinAmount(amount)}개를 ${formatKRW(revenue)}에 매도했습니다.`);
+
+            closeAllKeypads();
+            updateAssetDisplay();
+            currentKeypadAmount = '0';
+        }
+
+        function handleReward() {
+            const now = Math.floor(Date.now() / 1000);
+            if (now - lastRewardTime >= REWARD_COOLDOWN) {
+                totalKrwAsset += REWARD_AMOUNT;
+                lastRewardTime = now;
+                saveUserData(); 
+                updateAssetDisplay();
+                updateRewardTimer();
+                alert(`접속 보상 ${formatKRW(REWARD_AMOUNT)}을 받았습니다! 총 현금: ${formatKRW(totalKrwAsset)}`);
+            } else {
+                const timeLeft = REWARD_COOLDOWN - (now - lastRewardTime);
+                alert(`아직 보상을 받을 수 없습니다. ${formatTimeRemaining(timeLeft)} 후 다시 시도해 주세요.`);
+            }
+        }
+        
+        function handleAdminAddAsset() {
+            if (!currentAdminState) return alert('관리자 권한이 없습니다.');
+
+            const targetUser = adminTargetUser.value.trim();
+            const amount = parseFloat(adminAssetAmount.value);
+
+            if (!targetUser || isNaN(amount) || amount <= 0) {
+                return alert('유저 ID와 유효한 금액을 입력해주세요.');
+            }
+
+            const users = getUsers();
+            if (!users[targetUser]) {
+                return alert(`유저 ID ${targetUser}를 찾을 수 없습니다.`);
+            }
+
+            const currentAsset = users[targetUser].totalKrwAsset || 0;
+            users[targetUser].totalKrwAsset = currentAsset + amount;
+
+            localStorage.setItem('fakeCoinUsers', JSON.stringify(users));
+            
+            if (targetUser === currentUsername) {
+                totalKrwAsset = users[currentUsername].totalKrwAsset;
+                updateAssetDisplay();
+            } else {
+                updateRanking();
+            }
+
+            alert(`유저 ${targetUser}에게 ${formatKRW(amount)}이(가) 성공적으로 추가되었습니다.`);
+            adminTargetUser.value = '';
+            adminAssetAmount.value = '';
+        }
+
+        function filterCoinList(query) {
+            const items = coinListContainer.querySelectorAll('.coin-item');
+            const lowerCaseQuery = query.toLowerCase();
+
+            items.forEach(item => {
+                const coinName = item.querySelector('.coin-name').textContent.toLowerCase();
+                if (coinName.includes(lowerCaseQuery) || item.dataset.id.toLowerCase().includes(lowerCaseQuery)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        async function fetchAndUpdatePrices() {
+            try {
+                const response = await fetch(ALL_COINS_API_URL);
+                const apiResponse = await response.json();
+                
+                if (apiResponse.status !== '0000') throw new Error("API 응답 오류");
+
+                const data = apiResponse.data;
+                const marketData = Object.keys(data).filter(key => key !== 'date').map(key => ({
+                    id: key, name: key, ...data[key],
+                    changeRate: parseFloat(data[key].fluctate_rate_24H),
+                    closing_price: parseFloat(data[key].closing_price)
+                }));
+                
+                const coinList = [
+                    { id: 'BTC', name: '비트코인' }, { id: 'ETH', name: '이더리움' },
+                    { id: 'XRP', name: '리플' }, { id: 'ADA', name: '에이다' },
+                    { id: 'DOGE', name: '도지코인' }, { id: 'SOL', name: '솔라나' },
+                    { id: 'DOT', name: '폴카닷' }, { id: 'LINK', name: '체인링크' },
+                    { id: 'BNB', name: '바이낸스 코인' }, { id: 'AVAX', name: '아발란체' },
+                    { id: 'TRX', name: '트론' }, { id: 'BCH', name: '비트코인 캐시' },
+                    { id: 'LTC', name: '라이트코인' }, { id: 'ETC', name: '이더리움 클래식' },
+                    { id: 'FLOW', name: '플로우' }, { id: 'QTUM', name: '퀀텀' },
+                    { id: 'EOS', name: '이오스' }, { id: 'CHZ', name: '칠리즈' },
+                    { id: 'WAXP', name: '왁스' }, { id: 'T', name: '쓰레스홀드' },
+                    { id: 'GMT', name: '스테픈' }, { id: 'MANA', name: '디센트럴랜드' }
+                ];
+
+                marketData.forEach(coin => {
+                    const match = coinList.find(c => c.id === coin.id);
+                    const koreanName = match ? match.name : coin.id;
+
+                    currentCoinsData[coin.id] = { ...coin, name: koreanName };
+                    if (holdingCoins[coin.id] === undefined) {
+                        holdingCoins[coin.id] = 0.0;
+                    }
+                });
+                
+                const coinListHtml = marketData
+                    .filter(coin => coinList.some(c => c.id === coin.id)) 
+                    .map(coin => {
+                        let colorClass = 'zero';
+                        if (coin.changeRate > 0) colorClass = 'red'; 
+                        else if (coin.changeRate < 0) colorClass = 'blue'; 
+                        
+                        const priceFormatted = formatKRW(coin.closing_price).replace(' 원', '');
+                        const changeFormatted = `${(coin.changeRate > 0 ? '+' : '')}${coin.changeRate.toFixed(2)}%`;
+
+                        return `
+                            <div class="coin-item" data-id="${coin.id}">
+                                <div class="coin-name">
+                                    ${currentCoinsData[coin.id].name}
+                                    <div class="coin-code" style="font-size: 0.8em; color: #999;">${coin.id}/KRW</div>
+                                </div>
+                                <div class="current-price ${colorClass}" id="list-price-${coin.id}" style="width: 100px; text-align: right; font-weight: bold;">
+                                    ${priceFormatted}
+                                </div>
+                                <div class="change-rate ${colorClass}" id="list-change-${coin.id}" style="width: 80px; text-align: right; font-weight: bold;">
+                                    ${changeFormatted}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                
+                coinListContainer.innerHTML = coinListHtml;
+                
+                document.querySelectorAll('.coin-item').forEach(item => {
+                    item.removeEventListener('click', handleCoinClick);
+                    item.addEventListener('click', handleCoinClick);
+                });
+                
+                mainTitleElement.textContent = `📈 [Fake Coin] ${currentCoinsData[currentActiveCoin]?.name || currentActiveCoin} (${currentActiveCoin}/KRW)`;
+                updateAssetDisplay(); 
+
+                lastUpdatedTimeElement.textContent = new Date().toLocaleTimeString('ko-KR');
+
+                filterCoinList(coinSearchInput.value);
+
+            } catch (error) {
+                console.error("시세 업데이트 오류:", error);
+                lastUpdatedTimeElement.textContent = "업데이트 실패";
+            }
+        }
+
+        window.onload = () => {
+            const users = getUsers();
+            if (users[ADMIN_ID] === undefined) {
+                users[ADMIN_ID] = {
+                    password: ADMIN_PW,
+                    totalKrwAsset: 1000000000, 
+                    holdingCoins: {},
+                    lastRewardTime: 0,
+                    isAdmin: true
+                };
+                localStorage.setItem('fakeCoinUsers', JSON.stringify(users));
+            }
+
+
+
+            loadUserData();
+            
+            buyToggleButton.addEventListener('click', () => toggleKeypad('buy'));
+            sellToggleButton.addEventListener('click', () => toggleKeypad('sell'));
+    
+            keypadBuyExecute.addEventListener('click', executeBuy);
+            keypadSellExecute.addEventListener('click', executeSell);
+            
+            claimRewardButton.addEventListener('click', handleReward);
+            logoutButtonSettings.addEventListener('click', handleLogout); 
+            adminAddAssetButton.addEventListener('click', handleAdminAddAsset);
+            coinSearchInput.addEventListener('input', (e) => filterCoinList(e.target.value));
+
+            navItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const screenName = e.currentTarget.dataset.nav;
+                    switchScreen(screenName);
+                });
+            });
+
+            orderTabs.forEach(tab => {
+                tab.addEventListener('click', () => switchOrderTab(tab.dataset.tab));
+            });
+
+            switchScreen('summary'); 
+            loadTradingViewChart(currentActiveCoin); 
+            fetchAndUpdatePrices(); 
+            
+            setInterval(fetchAndUpdatePrices, refreshInterval);
+            setInterval(updateRewardTimer, 1000); 
+
+            window.addEventListener('beforeunload', saveUserData);
+        };
+
+    </script>
+</body>
+</html>
