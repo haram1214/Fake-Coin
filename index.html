@@ -33,7 +33,7 @@
             border-bottom: 1px solid #333;
             flex-shrink: 0; 
             
-            position: sticky; /* 헤더 고정 */
+            position: sticky; 
             top: 0;
             z-index: 20;
         }
@@ -41,25 +41,13 @@
             font-size: 1.4em;
             color: #ffd700;
         }
-        
-        /* ⭐️ STICKY ELEMENT 1: 검색창 영역 ⭐️ */
-        .explore-search-wrapper {
-            padding: 10px 15px; 
-            flex-shrink: 0; 
-            background-color: #1a1a1a; 
-            border-bottom: 1px solid #333;
-            
-            position: sticky; 
-            top: 60px; /* 헤더 아래에 고정 */
-            z-index: 10;
-        }
-
 
         .screens-wrapper {
             flex-grow: 1;
             overflow: hidden; 
             position: relative;
         }
+
         .app-screen {
             position: absolute;
             top: 0;
@@ -68,28 +56,37 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            overflow-y: auto; 
             background-color: #1a1a1a;
+            padding-bottom: 60px;
         }
 
-
-        #explore-screen .explore-content {
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column;
-            overflow: visible; 
-            background-color: #1a1a1a;
+        #explore-screen .explore-scroll-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 270px;
         }
-        
-        
-        #explore-screen .left-panel {
+
+        #fixed-order-panel {
+            position: fixed;
+            bottom: 60px;
+            left: 0;
             width: 100%;
-            flex-shrink: 0; 
-            padding-bottom: 5px;
-            border-bottom: 5px solid #1a1a1a;
+            background-color: #242424;
+            border-top: 1px solid #333;
+            z-index: 15;
         }
         
-        
+        .explore-search-wrapper {
+            padding: 10px 15px; 
+            flex-shrink: 0; 
+            background-color: #1a1a1a; 
+            border-bottom: 1px solid #333;
+            
+            position: sticky; 
+            top: 60px; 
+            z-index: 16;
+        }
+
         .bottom-nav {
             display: flex;
             justify-content: space-around;
@@ -98,6 +95,10 @@
             background-color: #242424;
             border-top: 1px solid #333;
             flex-shrink: 0; 
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 20;
         }
         .nav-item {
             display: flex;
@@ -119,28 +120,20 @@
             margin-bottom: 2px;
         }
         
-        .chart-wrapper { padding: 5px; min-height: 250px; }
+        .chart-wrapper { padding: 5px; min-height: 250px; max-height: 280px; }
         #chart-container { height: 250px; min-height: 250px; border-radius: 4px; max-height: 280px; }
         .order-area { padding: 10px 15px; } 
-        
-        /* ⭐️ STICKY ELEMENT 2: 주문 탭 영역 ⭐️ */
+
         .order-tabs { 
             display: flex; 
             border-bottom: 1px solid #444; 
             margin-bottom: 0; 
-            border-top: 5px solid #1a1a1a; 
-            padding-top: 10px;
-
-            position: sticky;
-            top: 110px; /* 검색창 영역 아래에 고정 (약 60px + 50px) */
-            z-index: 9;
             background-color: #242424; 
         }
         
         .order-tab { flex-grow: 1; text-align: center; padding: 10px 20px; cursor: pointer; font-weight: bold; color: #999; border: 1px solid #333; border-bottom: none; margin-right: -1px; background-color: #333; }
         .order-tab.active { color: #e0e0e0; background-color: #242424; border-top: 3px solid #007bff; border-bottom: 1px solid #242424; padding-top: 8px; }
-        
-        /* ⭐️ STICKY ELEMENT 3: 코인 목록 헤더 ⭐️ */
+
         .market-header { 
             display: flex; 
             justify-content: space-between; 
@@ -151,14 +144,13 @@
             border-bottom: 1px solid #333; 
             
             position: sticky;
-            top: 155px; /* 주문 탭 영역 아래에 고정 (약 110px + 45px) */
+            top: 50px;
             z-index: 8;
             background-color: #242424; 
         }
         
         .coin-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; border-bottom: 1px solid #333; cursor: pointer; transition: background-color 0.1s; }
         
-        /* coin-list-container에 배경색 적용 */
         #coin-list-container {
             background-color: #242424; 
         }
@@ -175,7 +167,7 @@
         #buy-execute-button { background-color: #4CAF50; }
         #sell-execute-button { background-color: #f0534c; }
 
-        .keypad-key { /* 퍼센트 버튼에 재사용 */
+        .keypad-key { 
             background-color: #444; 
             color: white;
             font-size: 1.0em;
@@ -190,18 +182,13 @@
         .keypad-key:active { background-color: #555; }
         .keypad-percentage { color: #007bff; }
 
-
         .ranking-section { margin-top: 20px; padding: 15px; border-top: 1px solid #333; background-color: #242424; }
         .ranking-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dotted #444; font-size: 0.95em; }
         .ranking-item .rank { width: 40px; font-weight: bold; color: #ffd700; }
         .ranking-item .asset { font-weight: bold; }
         .my-rank { background-color: #333; padding: 10px; margin-top: 10px; border-radius: 4px; text-align: center; font-weight: bold; color: #007bff; }
-
-
         .admin-section input { width: 100%; padding: 10px; margin-bottom: 10px; background-color: #333; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; }
         .admin-section button { background-color: #007bff; }
-        
-
         #settings-screen input[type="password"] {
             width: 100%; 
             padding: 10px; 
@@ -260,98 +247,33 @@
                 <input type="text" id="coin-search-input" placeholder="종목 또는 코인을 검색하세요..." style="width: 100%; padding: 10px; border: 1px solid #444; border-radius: 8px; background-color: #333; color: #e0e0e0; box-sizing: border-box;">
             </div>
             
-            <div class="order-tabs">
-                <div class="order-tab active" data-tab="buy">매수</div>
-                <div class="order-tab" data-tab="sell">매도</div>
-                <div class="order-tab" data-tab="hold">보유 코인</div>
-            </div>
-
-            <div class="market-header">
-                <div>한글명/코드</div>
-                <div>현재가</div>
-                <div>전일대비</div>
-            </div>
-
-            <div class="explore-content">
-                <div class="left-panel"> <div class="chart-wrapper">
-                        <h2 id="main-title" style="margin-top: 0; font-size: 1.1em; padding: 0 5px;">📈 [Fake Coin] 비트코인/KRW</h2>
-                        <div id="chart-container"></div>
-                    </div>
-
-                    <div class="order-area">
-                        <div id="buy-content" class="order-content">
-                            <div class="order-input-group">
-                                <label>주문가능</label>
-                                <input type="text" id="buy-available-asset" value="0 KRW" readonly>
-                            </div>
-                            <div class="order-input-group">
-                                <label>매수가격</label>
-                                <input type="number" id="buy-price-input" value="0" min="1">
-                                <span style="margin-left: 5px;">KRW</span>
-                            </div>
-                            
-                            <div class="order-input-group">
-                                <label>수량</label>
-                                <input type="number" id="buy-amount-input" value="0" min="0" step="0.00000001">
-                                <span style="margin-left: 5px;" id="buy-unit-display">BTC</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <button class="keypad-key keypad-percentage" data-value="25%" data-type="buy" style="width: 24%; padding: 8px;">25%</button>
-                                <button class="keypad-key keypad-percentage" data-value="50%" data-type="buy" style="width: 24%; padding: 8px;">50%</button>
-                                <button class="keypad-key keypad-percentage" data-value="75%" data-type="buy" style="width: 24%; padding: 8px;">75%</button>
-                                <button class="keypad-key keypad-percentage" data-value="100%" data-type="buy" style="width: 24%; padding: 8px;">100%</button>
-                            </div>
-                            
-                            <button class="action-button" id="buy-execute-button" style="background-color: #4CAF50;">Buy (매수)</button>
-                        </div>
-                        
-                        <div id="sell-content" class="order-content" style="display: none;">
-                            <div class="order-input-group">
-                                <label>보유수량</label>
-                                <input type="text" id="sell-holding-amount" value="0 BTC" readonly>
-                            </div>
-                            <div class="order-input-group">
-                                <label>매도가격</label>
-                                <input type="number" id="sell-price-input" value="0" min="1">
-                                <span style="margin-left: 5px;">KRW</span>
-                            </div>
-                            
-                            <div class="order-input-group">
-                                <label>수량</label>
-                                <input type="number" id="sell-amount-input" value="0" min="0" step="0.00000001">
-                                <span style="margin-left: 5px;" id="sell-unit-display">BTC</span>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                <button class="keypad-key keypad-percentage" data-value="25%" data-type="sell" style="width: 24%; padding: 8px;">25%</button>
-                                <button class="keypad-key keypad-percentage" data-value="50%" data-type="sell" style="width: 24%; padding: 8px;">50%</button>
-                                <button class="keypad-key keypad-percentage" data-value="75%" data-type="sell" style="width: 24%; padding: 8px;">75%</button>
-                                <button class="keypad-key keypad-percentage" data-value="100%" data-type="sell" style="width: 24%; padding: 8px;">100%</button>
-                            </div>
-
-                            <button class="action-button" id="sell-execute-button" style="background-color: #f0534c;">Sell (매도)</button>
-                        </div>
-
-                        <div id="hold-content" class="order-content" style="display: none;">
-                            <p>현재 보유 코인: <span id="holding-coin-name">BTC</span></p>
-                            <p>수량: <span id="holding-amount">0.00000000</span> <span id="holding-code">BTC</span></p>
-                            <p>평가 금액: <span id="holding-valuation">0 원</span></p>
-                        </div>
-
-                        <p style="font-size: 0.8em; margin-top: 20px; color: #999;">
-                            데이터 출처: Bithumb API | 최종 업데이트: <span id="last-updated-time"></span>
-                        </p>
-                    </div>
-                </div> <div id="coin-list-container">
+            <div class="explore-scroll-content">
+                
+                <div class="chart-wrapper">
+                    <h2 id="main-title" style="margin-top: 0; font-size: 1.1em; padding: 0 5px;">📈 [Fake Coin] 비트코인/KRW</h2>
+                    <div id="chart-container"></div>
                 </div>
-            </div>
-        </div>
-        
+
+                <div class="market-header">
+                    <div>한글명/코드</div>
+                    <div>현재가</div>
+                    <div>전일대비</div>
+                </div>
+
+                <div id="coin-list-container">
+                </div>
+                
+                <p style="font-size: 0.8em; margin-top: 20px; color: #999; padding: 0 15px;">
+                    데이터 출처: Bithumb API | 최종 업데이트: <span id="last-updated-time"></span>
+                </p>
+                
+            </div> </div>
+
         <div id="reward-screen" class="app-screen" style="display: none;">
             <div class="header" style="border-bottom: none;">
                 <span class="header-title" style="color: white; font-size: 1.2em;">접속보상</span>
             </div>
-            
-            <div class="content-wrapper">
+            <div style="padding: 15px; flex-grow: 1; overflow-y: auto;">
                 <h3 style="margin-top: 0; color: #ffd700; font-size: 1.5em;">🎉 일일 접속 보상 🎉</h3>
                 <p style="font-size: 1.1em; color: #e0e0e0; margin-bottom: 50px;">
                     하루 한 번 1천 5백만 KRW 를받으세요!
@@ -370,7 +292,7 @@
             <div class="header" style="border-bottom: none;">
                 <span class="header-title" style="color: white; font-size: 1.2em;">설정</span>
             </div>
-            <div style="padding: 15px;">
+            <div style="padding: 15px; flex-grow: 1; overflow-y: auto;">
                 <h3 style="margin-top: 0; padding-bottom: 10px; border-bottom: 1px solid #333;">계정 정보</h3>
                 <p id="user-info">로그인 정보 없음</p>
                 <button id="logout-button-settings" class="order-button" style="background-color: #f0534c; margin-top: 20px;">로그아웃</button>
@@ -403,6 +325,73 @@
             </div>
         </div>
 
+    </div>
+    
+    <div id="fixed-order-panel" style="display: none;">
+        <div class="order-tabs">
+            <div class="order-tab active" data-tab="buy">매수</div>
+            <div class="order-tab" data-tab="sell">매도</div>
+            <div class="order-tab" data-tab="hold">보유 코인</div>
+        </div>
+        <div class="order-area">
+            <div id="buy-content" class="order-content">
+                <div class="order-input-group">
+                    <label>주문가능</label>
+                    <input type="text" id="buy-available-asset" value="0 KRW" readonly>
+                </div>
+                <div class="order-input-group">
+                    <label>매수가격</label>
+                    <input type="number" id="buy-price-input" value="0" min="1">
+                    <span style="margin-left: 5px;">KRW</span>
+                </div>
+                
+                <div class="order-input-group">
+                    <label>수량</label>
+                    <input type="number" id="buy-amount-input" value="0" min="0" step="0.00000001">
+                    <span style="margin-left: 5px;" id="buy-unit-display">BTC</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <button class="keypad-key keypad-percentage" data-value="25%" data-type="buy" style="width: 24%; padding: 8px;">25%</button>
+                    <button class="keypad-key keypad-percentage" data-value="50%" data-type="buy" style="width: 24%; padding: 8px;">50%</button>
+                    <button class="keypad-key keypad-percentage" data-value="75%" data-type="buy" style="width: 24%; padding: 8px;">75%</button>
+                    <button class="keypad-key keypad-percentage" data-value="100%" data-type="buy" style="width: 24%; padding: 8px;">100%</button>
+                </div>
+                
+                <button class="action-button" id="buy-execute-button" style="background-color: #4CAF50;">Buy (매수)</button>
+            </div>
+            
+            <div id="sell-content" class="order-content" style="display: none;">
+                <div class="order-input-group">
+                    <label>보유수량</label>
+                    <input type="text" id="sell-holding-amount" value="0 BTC" readonly>
+                </div>
+                <div class="order-input-group">
+                    <label>매도가격</label>
+                    <input type="number" id="sell-price-input" value="0" min="1">
+                    <span style="margin-left: 5px;">KRW</span>
+                </div>
+                
+                <div class="order-input-group">
+                    <label>수량</label>
+                    <input type="number" id="sell-amount-input" value="0" min="0" step="0.00000001">
+                    <span style="margin-left: 5px;" id="sell-unit-display">BTC</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <button class="keypad-key keypad-percentage" data-value="25%" data-type="sell" style="width: 24%; padding: 8px;">25%</button>
+                    <button class="keypad-key keypad-percentage" data-value="50%" data-type="sell" style="width: 24%; padding: 8px;">50%</button>
+                    <button class="keypad-key keypad-percentage" data-value="75%" data-type="sell" style="width: 24%; padding: 8px;">75%</button>
+                    <button class="keypad-key keypad-percentage" data-value="100%" data-type="sell" style="width: 24%; padding: 8px;">100%</button>
+                </div>
+
+                <button class="action-button" id="sell-execute-button" style="background-color: #f0534c;">Sell (매도)</button>
+            </div>
+
+            <div id="hold-content" class="order-content" style="display: none;">
+                <p>현재 보유 코인: <span id="holding-coin-name">BTC</span></p>
+                <p>수량: <span id="holding-amount">0.00000000</span> <span id="holding-code">BTC</span></p>
+                <p>평가 금액: <span id="holding-valuation">0 원</span></p>
+            </div>
+        </div>
     </div>
     
     <div class="bottom-nav">
@@ -470,14 +459,14 @@
         const adminAddAssetButton = document.getElementById('admin-add-asset-button');
         const coinSearchInput = document.getElementById('coin-search-input');
 
-        // ⭐️ [수정] 키패드 관련 변수 제거 및 실행 버튼/수량 입력 필드 변수 추가
         const buyExecuteButton = document.getElementById('buy-execute-button');
         const sellExecuteButton = document.getElementById('sell-execute-button');
         const buyAmountInput = document.getElementById('buy-amount-input');
         const sellAmountInput = document.getElementById('sell-amount-input');
         const percentageButtons = document.querySelectorAll('.keypad-percentage');
-
         
+        const fixedOrderPanel = document.getElementById('fixed-order-panel'); // ⭐️ [추가] 고정 주문 패널 ⭐️
+
         const withdrawalButton = document.getElementById('withdrawal-button');
         const withdrawalConfirmArea = document.getElementById('withdrawal-confirm-area');
         const withdrawalPasswordInput = document.getElementById('withdrawal-password-input');
@@ -742,7 +731,6 @@
             const valuation = currentPrice * coinHolding;
             holdingValuationElement.textContent = formatKRW(valuation);
 
-            // ⭐️ [추가] 수량 입력 필드의 단위 업데이트 ⭐️
             document.getElementById('buy-unit-display').textContent = currentActiveCoin;
             document.getElementById('sell-unit-display').textContent = currentActiveCoin;
 
@@ -782,7 +770,6 @@
                     switchScreen('explore');
                 }
 
-                // ❌ 키패드 관련 호출 제거 
                 buyAmountInput.value = '0';
                 sellAmountInput.value = '0';
                 
@@ -792,20 +779,17 @@
             }
         }
 
-        // ❌ closeAllKeypads 함수 제거 
-
         function switchOrderTab(tabName) {
             document.querySelectorAll('.order-tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.order-content').forEach(content => content.style.display = 'none');
             
-            const targetTab = document.querySelector(`.order-tab[data-tab="${tabName}"]`);
-            const targetContent = document.getElementById(`${tabName}-content`);
+            // ⭐️ fixed-order-panel 내에서 탭과 콘텐츠를 찾도록 수정 ⭐️
+            const targetTab = fixedOrderPanel.querySelector(`.order-tab[data-tab="${tabName}"]`);
+            const targetContent = fixedOrderPanel.querySelector(`#${tabName}-content`);
             
             if (targetTab) targetTab.classList.add('active');
             if (targetContent) targetContent.style.display = 'block';
 
-            // ❌ 키패드 관련 호출 제거 
-            
             if (tabName === 'buy' || tabName === 'sell') {
                 const coinCode = currentActiveCoin;
                 
@@ -827,11 +811,16 @@
             navItems.forEach(item => item.classList.remove('active'));
             document.querySelector(`.nav-item[data-nav="${screenName}"]`).classList.add('active');
             
+            // ⭐️ fixed-order-panel 표시 여부 제어 ⭐️
+            if (screenName === 'explore') {
+                fixedOrderPanel.style.display = 'block';
+                loadTradingViewChart(currentActiveCoin);
+            } else {
+                fixedOrderPanel.style.display = 'none';
+            }
+
             if (screenName === 'summary' || screenName === 'explore') {
                 updateAssetDisplay();
-                if (screenName === 'explore') {
-                    loadTradingViewChart(currentActiveCoin);
-                }
             }
 
             if (screenName === 'settings') {
@@ -841,11 +830,6 @@
                 logoutButtonSettings.style.display = 'block';
             }
         }
-
-
-        // ❌ toggleKeypad 함수 제거
-        // ❌ updateKeypadDisplay 함수 제거
-        // ❌ handleKeypadInput 함수 제거
 
 
         function executeBuy() {
@@ -1071,11 +1055,9 @@
             loadUserData();
             
 
-            // ⭐️ [수정] 실행 버튼에 직접 연결 ⭐️
             buyExecuteButton.addEventListener('click', executeBuy); 
             sellExecuteButton.addEventListener('click', executeSell); 
             
-            // ⭐️ [추가] 퍼센트 버튼 로직 구현 ⭐️
             percentageButtons.forEach(button => {
                 button.addEventListener('click', (e) => {
                     const percentage = parseFloat(e.target.dataset.value) / 100;
@@ -1131,7 +1113,6 @@
             });
 
             switchScreen('summary'); 
-            loadTradingViewChart(currentActiveCoin); 
             fetchAndUpdatePrices(); 
             
             setInterval(fetchAndUpdatePrices, refreshInterval);
