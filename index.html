@@ -8,9 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
     
     <style>
-        /* ============================================== */
-        /* 기본 스타일 및 다크 테마 설정 */
-        /* ============================================== */
+
         body {
             font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
@@ -116,7 +114,6 @@
         .red { color: #f0534c; } 
         .zero { color: #999; } 
 
-        /* -------------------------- 주문 탭 및 키패드 스타일 -------------------------- */
         .order-tabs { display: flex; border-bottom: 1px solid #444; margin-bottom: 15px; }
         .order-tab { flex-grow: 1; text-align: center; padding: 10px 20px; cursor: pointer; font-weight: bold; color: #999; border: 1px solid #333; border-bottom: none; margin-right: -1px; background-color: #333; }
         .order-tab.active { color: #e0e0e0; background-color: #242424; border-top: 3px solid #007bff; border-bottom: 1px solid #242424; padding-top: 8px; }
@@ -124,24 +121,21 @@
         .order-input-group { margin-bottom: 10px; display: flex; align-items: center; }
         .order-input-group label { width: 70px; font-size: 0.9em; color: #999; flex-shrink: 0; }
         .order-input-group input { flex-grow: 1; padding: 8px; border: 1px solid #444; border-radius: 4px; text-align: right; background-color: #333; color: #e0e0e0; }
-        
-        /* 버튼 위에 키패드 토글 기능 추가를 위해 ID를 가진 버튼 스타일 변경 */
+
         .order-button { width: 100%; padding: 12px; margin-top: 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; transition: opacity 0.2s; color: white; }
         #buy-toggle-button { background-color: #4CAF50; } 
         #sell-toggle-button { background-color: #f0534c; } 
-        
-        /* 주문 실행 버튼 스타일 (키패드 내부에 표시) */
+
         .action-button { width: 100%; padding: 15px 0; margin-top: 10px; font-size: 1.1em; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; color: white; }
         #keypad-buy-execute { background-color: #4CAF50; }
         #keypad-sell-execute { background-color: #f0534c; }
 
 
-        /* --- 키패드 섹션 스타일 (기본적으로 숨김) --- */
         .keypad-container { 
             margin-top: 10px; 
             border-top: 1px solid #444; 
             padding-top: 15px;
-            display: none; /* 기본 숨김 */
+            display: none;
         }
         .amount-display-wrapper { margin-bottom: 10px; text-align: right; border-bottom: 1px solid #444; padding-bottom: 5px; }
         #current-amount-display, #sell-amount-display { font-size: 2.0em; font-weight: bold; color: white; display: block; }
@@ -170,18 +164,18 @@
         .keypad-percentage { background-color: #444; font-size: 1.0em; color: #007bff; }
         .keypad-delete { background-color: #444; font-size: 1.5em; }
 
-        /* --- 랭킹 스타일 --- */
+
         .ranking-section { margin-top: 20px; padding: 15px; border-top: 1px solid #333; background-color: #242424; }
         .ranking-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dotted #444; font-size: 0.95em; }
         .ranking-item .rank { width: 40px; font-weight: bold; color: #ffd700; }
         .ranking-item .asset { font-weight: bold; }
         .my-rank { background-color: #333; padding: 10px; margin-top: 10px; border-radius: 4px; text-align: center; font-weight: bold; color: #007bff; }
 
-        /* --- 어드민 스타일 --- */
+
         .admin-section input { width: 100%; padding: 10px; margin-bottom: 10px; background-color: #333; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; }
         .admin-section button { background-color: #007bff; }
         
-        /* --- 공통 인풋 스타일 (설정 화면에 사용) */
+
         #settings-screen input[type="password"] {
             width: 100%; 
             padding: 10px; 
@@ -364,7 +358,7 @@
             <div class="content-wrapper">
                 <h3 style="margin-top: 0; color: #ffd700; font-size: 1.5em;">🎉 일일 접속 보상 🎉</h3>
                 <p style="font-size: 1.1em; color: #e0e0e0; margin-bottom: 50px;">
-                    하루 한 번 **1천 5백만 KRW**를 받으세요!
+                    하루 한 번 1천 5백만 KRW 를받으세요!
                 </p>
 
                 <button id="claim-reward-button" class="order-button" style="background-color: #007bff;">보상 수령</button>
@@ -408,6 +402,8 @@
                 
                 <h3 style="padding-top: 20px; padding-bottom: 10px; border-bottom: 1px solid #333;">기타</h3>
                 <p>앱 버전: 1.0.4 (웹 앱)</p>
+                <p>Admin | 3119</p>
+                <p>모의코인투자 연습용</p>
             </div>
         </div>
 
@@ -445,9 +441,9 @@
         const ALL_COINS_API_URL = 'https://api.bithumb.com/public/ticker/ALL_KRW';
         const refreshInterval = 5000; 
         const REWARD_AMOUNT = 15000000; 
-        const REWARD_COOLDOWN = 86400; 
+        const REWARD_COOLDOWN = 3600; 
         const ADMIN_ID = 'Admin1214';
-        const ADMIN_PW = 'haram101214';
+        const ADMIN_PW = ' ';
 
         let currentKeypadAmount = '0';
         
@@ -485,7 +481,7 @@
         const sellKeypadContainer = document.getElementById('sell-keypad-container');
         const keypadBuyExecute = document.getElementById('keypad-buy-execute');
         const keypadSellExecute = document.getElementById('keypad-sell-execute');
-
+        
         const withdrawalButton = document.getElementById('withdrawal-button');
         const withdrawalConfirmArea = document.getElementById('withdrawal-confirm-area');
         const withdrawalPasswordInput = document.getElementById('withdrawal-password-input');
@@ -551,7 +547,6 @@
             window.location.href = LOGIN_PAGE;
         }
 
-
         function handleWithdrawalConfirmation() {
             const enteredPassword = withdrawalPasswordInput.value;
             const users = getUsers();
@@ -564,12 +559,11 @@
             }
 
             if (enteredPassword === userData.password) {
-                if (confirm('모든 데이터가 영구적으로 삭제됩니다. 정말로 회원 탈퇴하시겠습니까? :( )')) {
- 
+                if (confirm('모든 데이터가 영구적으로 삭제됩니다. 정말로 회원 탈퇴하시겠습니까?')) {
+
                     delete users[currentUsername];
                     localStorage.setItem('fakeCoinUsers', JSON.stringify(users));
 
- 
                     sessionStorage.removeItem('isLoggedIn');
                     sessionStorage.removeItem('currentUser');
 
@@ -577,14 +571,18 @@
                     alert('회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
                     window.location.href = LOGIN_PAGE;
                 } else {
+
                     withdrawalPasswordInput.value = '';
                     withdrawalConfirmArea.style.display = 'none';
+                    withdrawalButton.style.display = 'block'; 
+                    logoutButtonSettings.style.display = 'block';
                 }
             } else {
                 alert('비밀번호가 일치하지 않습니다.');
                 withdrawalPasswordInput.value = '';
             }
         }
+
 
         function formatKRW(price) { return Math.floor(parseFloat(price)).toLocaleString('ko-KR') + ' 원'; }
         
@@ -855,16 +853,18 @@
             if (screenName === 'settings') {
                 withdrawalConfirmArea.style.display = 'none';
                 withdrawalPasswordInput.value = '';
+                withdrawalButton.style.display = 'block'; 
+                logoutButtonSettings.style.display = 'block';
             }
         }
-        
+
 
         function toggleKeypad(type) {
             const keypadContainer = type === 'buy' ? buyKeypadContainer : sellKeypadContainer;
             const toggleButton = type === 'buy' ? buyToggleButton : sellToggleButton;
             const isHidden = keypadContainer.style.display === 'none' || keypadContainer.style.display === '';
 
-            // 다른 키패드 닫기
+
             if (type === 'buy') {
                 sellKeypadContainer.style.display = 'none';
                 sellToggleButton.textContent = 'Sell (매도)';
@@ -905,7 +905,6 @@
         }
 
         function handleKeypadInput(value, action, tabName) {
-            // 키패드가 숨겨져 있으면 작동 안함
             const keypadContainer = tabName === 'buy' ? buyKeypadContainer : sellKeypadContainer;
             if (keypadContainer.style.display === 'none' || keypadContainer.style.display === '') return;
 
@@ -1175,6 +1174,7 @@
 
             buyToggleButton.addEventListener('click', () => toggleKeypad('buy'));
             sellToggleButton.addEventListener('click', () => toggleKeypad('sell'));
+            
 
             keypadBuyExecute.addEventListener('click', executeBuy);
             keypadSellExecute.addEventListener('click', executeSell);
@@ -1189,7 +1189,6 @@
                 withdrawalConfirmArea.style.display = 'block';
                 withdrawalPasswordInput.focus();
                 withdrawalPasswordInput.value = '';
-
                 withdrawalButton.style.display = 'none'; 
                 logoutButtonSettings.style.display = 'none';
             });
@@ -1202,6 +1201,7 @@
             });
             
             confirmWithdrawalButton.addEventListener('click', handleWithdrawalConfirmation);
+      
 
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
