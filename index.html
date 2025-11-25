@@ -8,6 +8,9 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
     
     <style>
+        /* ============================================== */
+        /* 기본 스타일 및 다크 테마 설정 */
+        /* ============================================== */
         body {
             font-family: 'Noto Sans KR', sans-serif;
             margin: 0;
@@ -175,26 +178,19 @@
         .my-rank { background-color: #333; padding: 10px; margin-top: 10px; border-radius: 4px; text-align: center; font-weight: bold; color: #007bff; }
 
         /* --- 어드민 스타일 --- */
-        .admin-section { padding: 15px; }
         .admin-section input { width: 100%; padding: 10px; margin-bottom: 10px; background-color: #333; color: #e0e0e0; border: 1px solid #444; border-radius: 4px; }
         .admin-section button { background-color: #007bff; }
-
-        /* --- 접속보상 창 스타일 --- */
-        #reward-screen .content-wrapper {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%; 
-            padding: 20px;
-            text-align: center;
-        }
-        #claim-reward-button {
-            width: 80%;
-            max-width: 300px;
-            font-size: 1.1em;
-            padding: 15px;
-            margin-top: 30px;
+        
+        /* --- 공통 인풋 스타일 (설정 화면에 사용) */
+        #settings-screen input[type="password"] {
+            width: 100%; 
+            padding: 10px; 
+            margin-bottom: 10px; 
+            background-color: #1a1a1a; 
+            color: #e0e0e0; 
+            border: 1px solid #444; 
+            border-radius: 4px; 
+            box-sizing: border-box;
         }
         
     </style>
@@ -389,6 +385,17 @@
                 <p id="user-info">로그인 정보 없음</p>
                 <button id="logout-button-settings" class="order-button" style="background-color: #f0534c; margin-top: 20px;">로그아웃</button>
                 
+                <h3 style="padding-top: 30px; padding-bottom: 10px; border-bottom: 1px solid #333; color: #f0534c;">⚠️ 계정 삭제</h3>
+                <button id="withdrawal-button" class="order-button" style="background-color: #888; margin-top: 10px;">회원탈퇴</button>
+
+                <div id="withdrawal-confirm-area" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #f0534c; border-radius: 4px; background-color: #333;">
+                    <p style="margin-top: 0; font-weight: bold; color: #f0534c;">⚠️ 정말로 탈퇴하시겠습니까?</p>
+                    <p style="font-size: 0.9em;">(모든 자산 및 기록이 영구 삭제됩니다)</p>
+                    <input type="password" id="withdrawal-password-input" placeholder="비밀번호를 입력하세요" >
+                    <button id="confirm-withdrawal-button" class="order-button" style="background-color: #f0534c; margin-top: 0;">탈퇴 확인</button>
+                    <button id="cancel-withdrawal-button" class="order-button" style="background-color: #555;">취소</button>
+                </div>
+                
                 <div id="admin-menu-section" style="display: none;">
                     <h3 style="padding-top: 20px; padding-bottom: 10px; border-bottom: 1px solid #333; color: #ffd700;">⭐️ 어드민 관리 ⭐️</h3>
                     <div class="admin-section">
@@ -400,9 +407,7 @@
                 </div>
                 
                 <h3 style="padding-top: 20px; padding-bottom: 10px; border-bottom: 1px solid #333;">기타</h3>
-                <p>(웹 앱) 1.0.4</p>
-                <p>Admin | 3119</p>
-                <p>연습용</p>
+                <p>앱 버전: 1.0.4 (웹 앱)</p>
             </div>
         </div>
 
@@ -473,14 +478,19 @@
         const adminAssetAmount = document.getElementById('admin-asset-amount');
         const adminAddAssetButton = document.getElementById('admin-add-asset-button');
         const coinSearchInput = document.getElementById('coin-search-input');
-        
-        // 새로 추가된 버튼 및 키패드 컨테이너
+
         const buyToggleButton = document.getElementById('buy-toggle-button');
         const sellToggleButton = document.getElementById('sell-toggle-button');
         const buyKeypadContainer = document.getElementById('buy-keypad-container');
         const sellKeypadContainer = document.getElementById('sell-keypad-container');
         const keypadBuyExecute = document.getElementById('keypad-buy-execute');
         const keypadSellExecute = document.getElementById('keypad-sell-execute');
+
+        const withdrawalButton = document.getElementById('withdrawal-button');
+        const withdrawalConfirmArea = document.getElementById('withdrawal-confirm-area');
+        const withdrawalPasswordInput = document.getElementById('withdrawal-password-input');
+        const confirmWithdrawalButton = document.getElementById('confirm-withdrawal-button');
+        const cancelWithdrawalButton = document.getElementById('cancel-withdrawal-button');
 
 
         function getUsers() {
@@ -539,6 +549,41 @@
             sessionStorage.removeItem('isLoggedIn');
             sessionStorage.removeItem('currentUser');
             window.location.href = LOGIN_PAGE;
+        }
+
+
+        function handleWithdrawalConfirmation() {
+            const enteredPassword = withdrawalPasswordInput.value;
+            const users = getUsers();
+            const userData = users[currentUsername];
+            
+            if (!userData) {
+                alert('현재 사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.');
+                handleLogout();
+                return;
+            }
+
+            if (enteredPassword === userData.password) {
+                if (confirm('모든 데이터가 영구적으로 삭제됩니다. 정말로 회원 탈퇴하시겠습니까? :( )')) {
+ 
+                    delete users[currentUsername];
+                    localStorage.setItem('fakeCoinUsers', JSON.stringify(users));
+
+ 
+                    sessionStorage.removeItem('isLoggedIn');
+                    sessionStorage.removeItem('currentUser');
+
+
+                    alert('회원 탈퇴가 완료되었습니다. 이용해 주셔서 감사합니다.');
+                    window.location.href = LOGIN_PAGE;
+                } else {
+                    withdrawalPasswordInput.value = '';
+                    withdrawalConfirmArea.style.display = 'none';
+                }
+            } else {
+                alert('비밀번호가 일치하지 않습니다.');
+                withdrawalPasswordInput.value = '';
+            }
         }
 
         function formatKRW(price) { return Math.floor(parseFloat(price)).toLocaleString('ko-KR') + ' 원'; }
@@ -677,7 +722,7 @@
                     holdingHtml += `
                         <div class="coin-item" data-id="${coinId}" style="border-color: #444; padding: 15px;">
                             <div>
-                                ${currentCoinsData[coinId].name} (${coinId})
+                                ${currentCoinsData[coinId].name}
                                 <div style="font-size: 0.8em; color: #999;">${formatCoinAmount(amount)} ${coinId}</div>
                             </div>
                             <div style="font-weight: bold;">${formatKRW(value)}</div>
@@ -741,7 +786,7 @@
                 if (document.querySelector('.nav-item.active').dataset.nav !== 'explore') {
                     switchScreen('explore');
                 }
-                
+
                 closeAllKeypads();
                 currentKeypadAmount = '0'; 
                 
@@ -781,8 +826,7 @@
                     document.getElementById('sell-price-input').value = Math.floor(price);
                 }
                 updateKeypadDisplay(tabName);
-                
-               
+
                 const keypadKeys = document.querySelectorAll(`#${tabName}-content .keypad-key`);
                 keypadKeys.forEach(key => {
                     key.onclick = () => handleKeypadInput(key.dataset.value, key.dataset.action, tabName);
@@ -804,9 +848,13 @@
                 updateAssetDisplay();
                 if (screenName === 'explore') {
                     loadTradingViewChart(currentActiveCoin);
-                    // 탐색 화면 이동 시 키패드 닫기
                     closeAllKeypads();
                 }
+            }
+
+            if (screenName === 'settings') {
+                withdrawalConfirmArea.style.display = 'none';
+                withdrawalPasswordInput.value = '';
             }
         }
         
@@ -898,7 +946,6 @@
             }
             updateKeypadDisplay(tabName);
         }
-
 
 
         function executeBuy() {
@@ -1030,7 +1077,21 @@
                     { id: 'FLOW', name: '플로우' }, { id: 'QTUM', name: '퀀텀' },
                     { id: 'EOS', name: '이오스' }, { id: 'CHZ', name: '칠리즈' },
                     { id: 'WAXP', name: '왁스' }, { id: 'T', name: '쓰레스홀드' },
-                    { id: 'GMT', name: '스테픈' }, { id: 'MANA', name: '디센트럴랜드' }
+                    { id: 'GMT', name: '스테픈' }, { id: 'MANA', name: '디센트럴랜드' },
+                    { id: 'MATIC', name: '폴리곤' }, { id: 'ATOM', name: '코스모스' },
+                    { id: 'NEAR', name: '니어 프로토콜' }, { id: 'SAND', name: '샌드박스' },
+                    { id: 'AAVE', name: '에이브' }, { id: 'AXS', name: '액시 인피니티' },
+                    { id: 'SUI', name: '수이' }, { id: 'STX', name: '스택스' },
+                    { id: 'HBAR', name: '헤데라' }, { id: 'WEMIX', name: '위믹스' },
+                    { id: 'ZIL', name: '질리카' }, { id: 'IMX', name: '이뮤터블엑스' },
+                    { id: 'ALGO', name: '알고리랜드' }, { id: 'ICX', name: '아이콘' },
+                    { id: 'SEI', name: '세이' }, { id: 'APT', name: '앱토스' },
+                    { id: '1INCH', name: '원인치' }, { id: 'SSX', name: '썸씽' },
+                    { id: 'CVC', name: '시빅' }, { id: 'GALA', name: '갈라' },
+                    { id: 'SHIB', name: '시바이누' }, { id: 'STORJ', name: '스토리지' },
+                    { id: 'JST', name: '저스트' }, { id: 'ENJ', name: '엔진코인' },
+                    { id: 'BAT', name: '베이직어텐션토큰' }, { id: 'VET', name: '비체인' },
+                    { id: 'WAVES', name: '웨이브' }, { id: 'KNC', name: '카이버 네트워크' }
                 ];
 
                 marketData.forEach(coin => {
@@ -1095,7 +1156,7 @@
                 window.location.href = LOGIN_PAGE; 
                 return;
             }
-   
+
 
             const users = getUsers();
             if (users[ADMIN_ID] === undefined) {
@@ -1111,7 +1172,7 @@
 
             loadUserData();
             
-  
+
             buyToggleButton.addEventListener('click', () => toggleKeypad('buy'));
             sellToggleButton.addEventListener('click', () => toggleKeypad('sell'));
 
@@ -1122,6 +1183,25 @@
             logoutButtonSettings.addEventListener('click', handleLogout); 
             adminAddAssetButton.addEventListener('click', handleAdminAddAsset);
             coinSearchInput.addEventListener('input', (e) => filterCoinList(e.target.value));
+            
+
+            withdrawalButton.addEventListener('click', () => {
+                withdrawalConfirmArea.style.display = 'block';
+                withdrawalPasswordInput.focus();
+                withdrawalPasswordInput.value = '';
+
+                withdrawalButton.style.display = 'none'; 
+                logoutButtonSettings.style.display = 'none';
+            });
+            
+            cancelWithdrawalButton.addEventListener('click', () => {
+                withdrawalConfirmArea.style.display = 'none';
+                withdrawalPasswordInput.value = '';
+                withdrawalButton.style.display = 'block'; 
+                logoutButtonSettings.style.display = 'block';
+            });
+            
+            confirmWithdrawalButton.addEventListener('click', handleWithdrawalConfirmation);
 
             navItems.forEach(item => {
                 item.addEventListener('click', (e) => {
